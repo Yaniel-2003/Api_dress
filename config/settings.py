@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 
 
@@ -145,6 +146,7 @@ CORS_ALLOWED_ORIGINS = [
 
 # Configuración para que JWT entienda que usamos idusuario y no id
 SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
     'USER_ID_FIELD': 'idusuario',
     'USER_ID_CLAIM': 'user_id',
 }
@@ -155,3 +157,6 @@ REST_FRAMEWORK = {
     ),
 }
 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = r'C:\Users\PC\Documents\ProyectoPython\dress-shopy\Fotos_articulos'

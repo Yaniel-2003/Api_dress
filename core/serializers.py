@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
+import os, json
+from django.db import transaction
 from .models import *
 
 #### TABLAS CATALOGO 
@@ -61,13 +63,13 @@ class CategoriaListSerializer(serializers.ModelSerializer):
         fields = "__all__"
         depth = 1
 
-        def get_padre(self, obj):
-            if obj.padre:
-                return {
-                    "id": obj.padre.categoria,
-                    "nombre": obj.padre.nombre
-                }
-            return None
+    def get_padre(self, obj):
+        if obj.padre:
+            return {
+                "id": obj.padre.idcategoria,
+                "nombre": obj.padre.nombre
+            }
+        return None
 
 class CategoriaWriteSerializer(serializers.ModelSerializer):
     genero = serializers.PrimaryKeyRelatedField(queryset=Genero.objects.all())
@@ -122,7 +124,8 @@ class ArticulosListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Articulos
-        fields = "__all__"
+        fields = ['idarticulo', 'marca', 'categoria', 'impuestos', 'nombre', 'slug', 'descripcion', 'precio_base', 'estado', 'precio_con_impuesto']
+    
 
 class ArticulosWriteSerializer(serializers.ModelSerializer):
     marca = serializers.PrimaryKeyRelatedField(queryset=Marcas.objects.all())
@@ -131,8 +134,11 @@ class ArticulosWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Articulos
-        fields = ['idarticulo', 'marca', 'categoria', 'impuestos', 'nombre', 'slug', 'descripcion', 'precio_base', 'estado']
-
+        #LA AGREGAMOS EN LAS FILAS DE LA TABLA
+        fields = ['idarticulo', 'marca', 'categoria', 'impuestos', 'nombre', 'slug', 'descripcion', 'precio_base', 'estado', 'precio_con_impuesto']
+        extra_kwargs = {
+            'slug': {'validators': []},
+        }
 
 class VariantesArticulosListSerializer(serializers.ModelSerializer):
     articulo = ArticulosListSerializer(read_only=True)
@@ -141,16 +147,113 @@ class VariantesArticulosListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VariantesArticulos
-        fields = "__all__"
+        fields =  ['idvararticulo', 'articulo', 'color', 'talla', 'sku', 'stock', 'precio_extra', 'foto','precio_final']
 
 class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
-    articulo = serializers.PrimaryKeyRelatedField(queryset=Articulos.objects.all())
+    articulo = ArticulosWriteSerializer()
     color = serializers.PrimaryKeyRelatedField(queryset=Colores.objects.all())
     talla = serializers.PrimaryKeyRelatedField(queryset=Tallas.objects.all())
+    
 
     class Meta:
         model = VariantesArticulos
-        fields = ['idvararticulo', 'articulo', 'color', 'talla', 'sku', 'stock', 'precio_extra', 'foto']
+        fields = ['idvararticulo', 'articulo', 'color', 'talla', 'sku', 'stock', 'precio_extra', 'foto','precio_final']
+
+    def to_internal_value(self, data):
+        if 'articulo' in data and isinstance(data['articulo'],str):
+
+            datos_mutables = {key: value for key, value in data.items()}
+            try:
+                datos_mutables['articulo'] = json.loads(data['articulo'])
+            except json.JSONDecodeError:
+                pass
+            return super().to_internal_value(datos_mutables)
+        return super().to_internal_value(data) 
+    
+    
+    def create(self, validated_data):
+        EXTENSIONES = ['.jpg', '.png', '.jpeg']
+        datos_articulo = validated_data.pop('articulo')
+
+
+        with transaction.atomic():
+            nuevos_articulos = Articulos.objects.create(**datos_articulo)
+
+            variante = VariantesArticulos.objects.create(
+                articulo = nuevos_articulos,
+                **validated_data
+            )
+
+            request = self.context.get('request')
+
+            errores = []
+
+            for i in range (4):
+                archivo = request.FILES.get(f'foto{i}')
+
+                if not archivo: continue
+
+                ext = os.path.splitext(archivo.name)[1].lower()
+
+                if ext not in EXTENSIONES:
+                    errores.append(f"Foto{i}: extension no permitida") 
+                    continue
+                
+                if not variante.foto:
+                    variante.foto = archivo
+                    variante.save()
+
+                foto = FotoVarianteArticulo(variante_articulo=variante)
+
+                foto.archivo.save(archivo.name, archivo, save=True)
+
+            return variante
+        
+    def update(self, instance, validated_data):
+        EXTENSIONES = ['.jpg', '.png', '.jpeg']
+        datos_articulo = validated_data.pop('articulo', None)
+
+        with transaction.atomic():
+            #ACTUALIZAR LOS CAMPOS DE LA VARIANTE
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            instance.save()
+
+            variante = instance
+            # SI SE ENVIARON DATOS LOS ACTUALIZAMOS
+            if datos_articulo:
+                articulo_existente = instance.articulo #ACCEDEMOS AL ARTICULO
+                for attr, value in datos_articulo.items(): #RECORREMOS LOS DATOS NUEVOS
+                    setattr(articulo_existente, attr, value) # MODIFICAMS LOS CAMPOS
+                articulo_existente.save()
+
+            request = self.context.get('request')
+
+            errores = []
+
+            # ACTUALIZA LAS FOTOS Y ELIMINA LAS ANTIGUAS
+            FotoVarianteArticulo.objects.filter(variante_articulo=variante).delete()
+
+            for i in range (4):
+                archivo = request.FILES.get(f'foto{i}')
+
+                if not archivo: continue
+
+                ext = os.path.splitext(archivo.name)[1].lower()
+
+                if ext not in EXTENSIONES:
+                    errores.append(f"Foto{i}: extension no permitida") 
+                    continue
+                
+                if not variante.foto:
+                    variante.foto = archivo
+                    variante.save()
+
+                
+                nueva_foto = FotoVarianteArticulo(variante_articulo=variante)
+                nueva_foto.archivo.save(archivo.name, archivo, save=True)
+
+            return instance
 
 class ArticuloDescuentoSerializer(serializers.ModelSerializer):
     vararticulo = VariantesArticulosListSerializer(read_only=True)

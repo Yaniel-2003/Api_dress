@@ -238,6 +238,15 @@ class Articulos(models.Model):
     estado = models.BooleanField(default=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def precio_con_impuesto(self):
+        if not self.impuestos:
+            return self.precio_base
+        return self.precio_base + (
+            self.precio_base * self.impuestos.porcentaje / 100
+        )
+
+
     class Meta:
         db_table = 'SH_Articulo'
         managed = True 
@@ -254,14 +263,45 @@ class VariantesArticulos(models.Model):
     sku = models.CharField(max_length=60, unique=True)
     stock = models.IntegerField()
     precio_extra = models.DecimalField(max_digits=10, decimal_places=2)
-    foto = models.CharField(max_length=1000)
+    foto = models.ImageField(upload_to='img_variantes', null=True, blank=True)
 
+    def calcular_precio(self):
+        if self.precio_extra > 0:
+            base_para_impuesto = self.articulo.precio_base + self.precio_extra
+        else:
+            base_para_impuesto = self.articulo.precio_base
+
+        if not self.articulo.impuestos:
+            return base_para_impuesto
+            
+        return base_para_impuesto + (
+            base_para_impuesto * self.articulo.impuestos.porcentaje / 100
+        )
+
+    @property
+    def precio_final(self):
+        return self.calcular_precio()
+
+        
     class Meta:
         db_table = 'SH_Variante_Articulos'
         managed = True
 
     def __str__(self):
         return f"SKU: {self.sku} - Stock: {self.stock}"
+    
+
+def Ruta_foto_articulo(instance, filname):
+    return f'Articulo{instance.variante_articulo.idvararticulo}/{filname}'
+
+class FotoVarianteArticulo(models.Model):
+    idfoto = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    variante_articulo = models.ForeignKey('VariantesArticulos', on_delete=models.CASCADE)
+    archivo = models.ImageField(upload_to=Ruta_foto_articulo)
+
+    class Meta:
+        db_table = 'SH_Foto_articulo'
+        managed = True
     
 
 class ArticuloDescuento(models.Model):
