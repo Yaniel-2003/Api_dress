@@ -33,6 +33,11 @@ class ColorViewSet(viewsets.ModelViewSet):
     serializer_class = ColoresSerializer
     queryset = Colores.objects.all().order_by('idcolor')
 
+class PrendaViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TiposPrendasSerializer
+    queryset = TiposPrendas.objects.all().order_by('idprenda')
+
 
 class TallaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]

@@ -70,6 +70,20 @@ class Colores(models.Model):
         return f"{self.nombre} - {self.hex_code}"    
 
 
+
+class TiposPrendas(models.Model):
+    idprenda = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    nombre = models.CharField(max_length=100, blank=True, null=True)
+    slug = models.CharField(max_length=120, blank=True, null=True)
+
+    class Meta:
+        db_table = 'SH_Tipo_prendas'
+        managed = True
+
+    def __str__(self):
+        return f"{self.nombre}"
+
+
 class Tallas(models.Model):
     idtalla = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     codigo = models.CharField(max_length=10, null=True, blank=True)
@@ -231,6 +245,7 @@ class Articulos(models.Model):
     marca = models.ForeignKey('Marcas', on_delete=models.CASCADE)
     categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE)
     impuestos = models.ForeignKey('Impuestos', on_delete=models.CASCADE)
+    prendas = models.ForeignKey('TiposPrendas', on_delete=models.CASCADE, blank=True, null=True)
     nombre = models.CharField(max_length=200)
     slug = models.CharField(max_length=220, unique=True)
     descripcion = models.TextField(null=True, blank=True)

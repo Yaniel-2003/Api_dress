@@ -31,6 +31,11 @@ class ColoresSerializer(serializers.ModelSerializer):
         model = Colores
         fields = "__all__"
 
+class TiposPrendasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TiposPrendas
+        fields = "__all__"
+
 class TallasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tallas
@@ -121,21 +126,23 @@ class ArticulosListSerializer(serializers.ModelSerializer):
     marca = MarcasSerializer(read_only=True)
     categoria = CategoriaListSerializer(read_only=True)
     impuestos = ImpuestosSerializer(read_only=True)
+    prendas = TiposPrendasSerializer(read_only=True)
 
     class Meta:
         model = Articulos
-        fields = ['idarticulo', 'marca', 'categoria', 'impuestos', 'nombre', 'slug', 'descripcion', 'precio_base', 'estado', 'precio_con_impuesto']
+        fields = ['idarticulo', 'marca', 'categoria', 'impuestos', 'prendas', 'nombre', 'slug', 'descripcion', 'precio_base', 'estado', 'precio_con_impuesto']
     
 
 class ArticulosWriteSerializer(serializers.ModelSerializer):
     marca = serializers.PrimaryKeyRelatedField(queryset=Marcas.objects.all())
     categoria = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.all())
     impuestos = serializers.PrimaryKeyRelatedField(queryset=Impuestos.objects.all())
+    prendas = serializers.PrimaryKeyRelatedField(queryset=TiposPrendas.objects.all())
 
     class Meta:
         model = Articulos
         #LA AGREGAMOS EN LAS FILAS DE LA TABLA
-        fields = ['idarticulo', 'marca', 'categoria', 'impuestos', 'nombre', 'slug', 'descripcion', 'precio_base', 'estado', 'precio_con_impuesto']
+        fields = ['idarticulo', 'marca', 'categoria', 'impuestos', 'prendas', 'nombre', 'slug', 'descripcion', 'precio_base', 'estado', 'precio_con_impuesto']
         extra_kwargs = {
             'slug': {'validators': []},
         }
