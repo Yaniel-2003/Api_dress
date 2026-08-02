@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view, parser_classes, permission_class
 import os
 
 from ..serializers import ArticulosListSerializer, ArticulosWriteSerializer, VariantesArticulosListSerializer, VariantesArticulosWriteSerializer, ArticuloDescuentoSerializer
-from ..models import Articulos, VariantesArticulos, ArticuloDescuento, FotoVarianteArticulo
+from ..models import Articulos, VariantesArticulos, ArticuloDescuento, FotoVarianteArticulo, Cat_Reglas_Tallaje, Prendas, Tallas
 
 class ArticulosViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -68,12 +68,15 @@ class VariantesArticulosViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = VariantesArticulos.objects.select_related(
             'articulo',
+            'articulo__prendas',
             'articulo__marca',
             'articulo__categoria',
             'articulo__impuestos',
             'color',
             'talla'
         ).order_by('idvararticulo')
+
+       
 
         query = self.request.query_params
 
@@ -82,6 +85,7 @@ class VariantesArticulosViewSet(viewsets.ModelViewSet):
         talla_id = query.get('talla')
         marca_id = query.get('marca')
         categoria_id = query.get('categoria')
+        prendas_id = query.get('prendas')
         estado_articulo = query.get('estado')
 
         if busqueda:
@@ -93,8 +97,12 @@ class VariantesArticulosViewSet(viewsets.ModelViewSet):
                 Q(sku__icontains=busqueda)
             )
 
+
         if color_id:
             queryset = queryset.filter(color_id=color_id)
+
+        if prendas_id:
+            queryset = queryset.filter(articulo__prendas_id=prendas_id)
 
         if talla_id:
             queryset = queryset.filter(talla_id=talla_id)

@@ -35,14 +35,36 @@ class ColorViewSet(viewsets.ModelViewSet):
 
 class PrendaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = TiposPrendasSerializer
-    queryset = TiposPrendas.objects.all().order_by('idprenda')
+    serializer_class = PrendasSerializer
+    queryset = Prendas.objects.all().order_by('idprenda')
+
+class CatReglasTallajeViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CatReglasTallajeSerializer
+    queryset = Cat_Reglas_Tallaje.objects.all().order_by('idregla')
 
 
 class TallaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = TallasSerializer
-    queryset = Tallas.objects.all().order_by('idtalla')
+
+    def get_queryset(self):
+        queryset = Tallas.objects.all().order_by('idtalla')
+
+        query = self.request.query_params
+
+        prenda_id = query.get('prenda')
+
+        if prenda_id:
+            try:
+                prenda = Prendas.objects.get(idprenda=prenda_id)
+                queryset = queryset.filter(regla_tallaje=prenda.regla_tallaje)
+
+            except Prendas.DoesNotExist:
+                queryset = Tallas.objects.none()
+            
+        return queryset
+        
 
 
 class ImpuestoViewSet(viewsets.ModelViewSet):

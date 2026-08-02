@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
+from decimal import Decimal
 import os, json
 from django.db import transaction
+from django.utils import timezone
+import json
 from .models import *
 
 #### TABLAS CATALOGO 
@@ -31,9 +34,14 @@ class ColoresSerializer(serializers.ModelSerializer):
         model = Colores
         fields = "__all__"
 
-class TiposPrendasSerializer(serializers.ModelSerializer):
+class CatReglasTallajeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TiposPrendas
+        model = Cat_Reglas_Tallaje
+        fields = "__all__"
+
+class PrendasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prendas
         fields = "__all__"
 
 class TallasSerializer(serializers.ModelSerializer):
@@ -126,7 +134,7 @@ class ArticulosListSerializer(serializers.ModelSerializer):
     marca = MarcasSerializer(read_only=True)
     categoria = CategoriaListSerializer(read_only=True)
     impuestos = ImpuestosSerializer(read_only=True)
-    prendas = TiposPrendasSerializer(read_only=True)
+    prendas = PrendasSerializer(read_only=True)
 
     class Meta:
         model = Articulos
@@ -137,7 +145,7 @@ class ArticulosWriteSerializer(serializers.ModelSerializer):
     marca = serializers.PrimaryKeyRelatedField(queryset=Marcas.objects.all())
     categoria = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.all())
     impuestos = serializers.PrimaryKeyRelatedField(queryset=Impuestos.objects.all())
-    prendas = serializers.PrimaryKeyRelatedField(queryset=TiposPrendas.objects.all())
+    prendas = serializers.PrimaryKeyRelatedField(queryset=Prendas.objects.all())
 
     class Meta:
         model = Articulos
@@ -158,8 +166,13 @@ class VariantesArticulosListSerializer(serializers.ModelSerializer):
 
 class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
     articulo = ArticulosWriteSerializer()
-    color = serializers.PrimaryKeyRelatedField(queryset=Colores.objects.all())
-    talla = serializers.PrimaryKeyRelatedField(queryset=Tallas.objects.all())
+    color = serializers.PrimaryKeyRelatedField(queryset=Colores.objects.all(), required=False, allow_null=True)
+    talla = serializers.PrimaryKeyRelatedField(queryset=Tallas.objects.all(), required=False, allow_null=True)
+
+    sku = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    stock = serializers.IntegerField(required=False, allow_null=True)
+    precio_extra = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, allow_null=True)
+
     
 
     class Meta:
@@ -167,54 +180,103 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
         fields = ['idvararticulo', 'articulo', 'color', 'talla', 'sku', 'stock', 'precio_extra', 'foto','precio_final']
 
     def to_internal_value(self, data):
-        if 'articulo' in data and isinstance(data['articulo'],str):
-
-            datos_mutables = {key: value for key, value in data.items()}
+        datos_mutables = {key: value for key, value in data.items()}
+        if 'articulo' in data and isinstance(data['articulo'], str):
             try:
                 datos_mutables['articulo'] = json.loads(data['articulo'])
             except json.JSONDecodeError:
                 pass
-            return super().to_internal_value(datos_mutables)
-        return super().to_internal_value(data) 
+        return super().to_internal_value(datos_mutables)
     
     
     def create(self, validated_data):
         EXTENSIONES = ['.jpg', '.png', '.jpeg']
         datos_articulo = validated_data.pop('articulo')
 
+        request = self.context.get('request')
+        variante_raw = request.data.get('variantes') if request else None
+
+        if isinstance(variante_raw, str):
+            try:
+                variante_list = json.loads(variante_raw)
+            except json.JSONDecodeError:
+                variante_list = []
+        elif isinstance(variante_raw, list):
+            variante_list = variante_raw
+        else:
+            variante_list = []
+
 
         with transaction.atomic():
-            nuevos_articulos = Articulos.objects.create(**datos_articulo)
+            slug_articulo = datos_articulo.get('slug')
+            if slug_articulo:
+                nuevos_articulos, _ = Articulos.objects.get_or_create(
+                    slug=slug_articulo,
+                    defaults=datos_articulo
+                )
+            else:
+                nuevos_articulos = Articulos.objects.create(**datos_articulo)
 
-            variante = VariantesArticulos.objects.create(
-                articulo = nuevos_articulos,
-                **validated_data
-            )
+            primer_variante = None
 
-            request = self.context.get('request')
+            for var_data in variante_list:
+                sku_val = str(var_data.get('sku', '')).strip()
+                color_id = var_data.get('color')
+                talla_id = var_data.get('talla')
 
-            errores = []
+                try:
+                    stock_val = int(var_data.get('stock')) if var_data.get('stock') not in (None, '') else 0
+                except (ValueError, TypeError):
+                    stock_val = 0
 
-            for i in range (4):
-                archivo = request.FILES.get(f'foto{i}')
+                try:
+                    precio_extra_val = Decimal(str(var_data.get('precio_extra'))).quantize(Decimal('0.01')) if var_data.get('precio_extra') not in (None, '') else Decimal('0.00')
+                except Exception:
+                    precio_extra_val = Decimal('0.00')
 
-                if not archivo: continue
+                if sku_val:
+                    variante, _ = VariantesArticulos.objects.update_or_create(
+                        sku=sku_val,
+                        defaults={
+                            'articulo': nuevos_articulos,
+                            'color_id': color_id,
+                            'talla_id': talla_id,
+                            'stock': stock_val,
+                            'precio_extra': precio_extra_val,
+                        }
+                    )
+                else:
+                    variante = VariantesArticulos.objects.create(
+                        articulo=nuevos_articulos,
+                        color_id=color_id,
+                        talla_id=talla_id,
+                        sku='',
+                        stock=stock_val,
+                        precio_extra=precio_extra_val,
+                    )
 
-                ext = os.path.splitext(archivo.name)[1].lower()
+                if not primer_variante:
+                    primer_variante = variante
 
-                if ext not in EXTENSIONES:
-                    errores.append(f"Foto{i}: extension no permitida") 
-                    continue
-                
-                if not variante.foto:
-                    variante.foto = archivo
-                    variante.save()
+                if request:
+                    for i in range(4):
+                        archivo = request.FILES.get(f'foto{i}')
 
-                foto = FotoVarianteArticulo(variante_articulo=variante)
+                        if not archivo: continue
 
-                foto.archivo.save(archivo.name, archivo, save=True)
+                        ext = os.path.splitext(archivo.name)[1].lower()
 
-            return variante
+                        if ext not in EXTENSIONES:
+                            continue
+                        
+                        if not variante.foto:
+                            variante.foto = archivo
+                            variante.save()
+
+                        foto = FotoVarianteArticulo(variante_articulo=variante)
+                        foto.archivo.save(archivo.name, archivo, save=True)
+
+            return primer_variante or nuevos_articulos
         
     def update(self, instance, validated_data):
         EXTENSIONES = ['.jpg', '.png', '.jpeg']
@@ -265,10 +327,37 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
 class ArticuloDescuentoSerializer(serializers.ModelSerializer):
     vararticulo = VariantesArticulosListSerializer(read_only=True)
     descuento = DescuentosSerializer(read_only=True)
+    precio_con_descuento = serializers.SerializerMethodField()
 
     class Meta:
         model = ArticuloDescuento
-        fields = "__all__"
+        fields = ['idartdescuento', 'vararticulo', 'descuento', 'precio_con_descuento','cantidad_inicial', 'cantidad_restante']
+
+    def get_precio_con_descuento(self, articuloDescuento):
+        precio_final = articuloDescuento.vararticulo.precio_final
+        descuento = articuloDescuento.descuento.valor
+
+        cantidad_restante = articuloDescuento.cantidad_restante
+        precio_con_descuento = precio_final * (Decimal('1')- Decimal(str(descuento)) / Decimal(100))
+
+
+        fecha1 = articuloDescuento.descuento.valido_desde 
+        fecha2 = articuloDescuento.descuento.valido_hasta 
+
+        ahora = timezone.now().date()
+
+
+        if (ahora < fecha1 or ahora > fecha2) or cantidad_restante <= 0:
+            return precio_final
+            
+        return precio_con_descuento
+            
+        
+
+
+
+        
+
 
 
 #### CARRITO DE COMPRAS 

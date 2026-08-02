@@ -71,13 +71,28 @@ class Colores(models.Model):
 
 
 
-class TiposPrendas(models.Model):
+class Cat_Reglas_Tallaje(models.Model):
+    idregla = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    nombre = models.CharField(max_length=100, unique=True)
+    descripcion = models.TextField(null=True, blank=True)
+    estado = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'SH_Cat_Reglas_Tallaje'
+        managed = True
+
+    def __str__(self):
+        return f"{self.nombre}"
+
+
+class Prendas(models.Model):
     idprenda = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    regla_tallaje = models.ForeignKey('Cat_Reglas_Tallaje', on_delete=models.SET_NULL, null=True, blank=True, related_name='prendas')
     nombre = models.CharField(max_length=100, blank=True, null=True)
     slug = models.CharField(max_length=120, blank=True, null=True)
 
     class Meta:
-        db_table = 'SH_Tipo_prendas'
+        db_table = 'SH_Prendas'
         managed = True
 
     def __str__(self):
@@ -86,6 +101,7 @@ class TiposPrendas(models.Model):
 
 class Tallas(models.Model):
     idtalla = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    regla_tallaje = models.ForeignKey('Cat_Reglas_Tallaje', on_delete=models.CASCADE, related_name='tallas', null=True, blank=True)
     codigo = models.CharField(max_length=10, null=True, blank=True)
     descripcion = models.TextField(null=True, blank=True)
     tipo = models.CharField(max_length=20, null=True, blank=True)
@@ -245,7 +261,7 @@ class Articulos(models.Model):
     marca = models.ForeignKey('Marcas', on_delete=models.CASCADE)
     categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE)
     impuestos = models.ForeignKey('Impuestos', on_delete=models.CASCADE)
-    prendas = models.ForeignKey('TiposPrendas', on_delete=models.CASCADE, blank=True, null=True)
+    prendas = models.ForeignKey('Prendas', on_delete=models.CASCADE, blank=True, null=True)
     nombre = models.CharField(max_length=200)
     slug = models.CharField(max_length=220, unique=True)
     descripcion = models.TextField(null=True, blank=True)
@@ -323,6 +339,8 @@ class ArticuloDescuento(models.Model):
     idartdescuento = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     vararticulo = models.ForeignKey('VariantesArticulos', on_delete=models.CASCADE)
     descuento = models.ForeignKey('Descuentos', on_delete=models.CASCADE)
+    cantidad_inicial = models.CharField(max_length=100, blank=True, null=True)
+    cantidad_restante = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         db_table = 'SH_Articulo_Descuento'
