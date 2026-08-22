@@ -7,11 +7,14 @@ from django.db.models import Q
 from rest_framework.decorators import api_view, parser_classes, permission_classes
 import os
 
-from ..serializers import ArticulosListSerializer, ArticulosWriteSerializer, VariantesArticulosListSerializer, VariantesArticulosWriteSerializer, ArticuloDescuentoSerializer
+from ..serializers import ArticulosListSerializer, ArticulosWriteSerializer, VariantesArticulosListSerializer, VariantesArticulosWriteSerializer, ArticuloDescuentoSerializer, ArticuloDescuentoWriteSerializer
 from ..models import Articulos, VariantesArticulos, ArticuloDescuento, FotoVarianteArticulo, Cat_Reglas_Tallaje, Prendas, Tallas
+from ..paginacion import PaginacionGlobal
+
 
 class ArticulosViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    pagination_class = PaginacionGlobal
 
     def get_queryset(self):
         queryset = Articulos.objects.select_related(
@@ -64,6 +67,7 @@ class ArticulosViewSet(viewsets.ModelViewSet):
 
 class VariantesArticulosViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    pagination_class = PaginacionGlobal
 
     def get_queryset(self):
         queryset = VariantesArticulos.objects.select_related(
@@ -179,6 +183,7 @@ def Fotos_articulos(request, idvararticulo):
 
 class ArticuloDescuentoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    pagination_class = PaginacionGlobal
 
     def get_queryset(self):
         queryset = ArticuloDescuento.objects.select_related(
@@ -186,6 +191,9 @@ class ArticuloDescuentoViewSet(viewsets.ModelViewSet):
             'descuento'
         ).order_by('-descuento')
 
+        return queryset
+
     def get_serializer_class(self):
         if self.action in ('create', 'update', 'partial_update'):
-            return ArticuloDescuentoSerializer
+            return ArticuloDescuentoWriteSerializer
+        return ArticuloDescuentoSerializer

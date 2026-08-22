@@ -159,10 +159,48 @@ class VariantesArticulosListSerializer(serializers.ModelSerializer):
     articulo = ArticulosListSerializer(read_only=True)
     color = ColoresSerializer(read_only=True)
     talla = TallasSerializer(read_only=True)
+    historial_descuentos = serializers.SerializerMethodField()
+    precio_con_descuento_activo = serializers.SerializerMethodField()
 
     class Meta:
         model = VariantesArticulos
-        fields =  ['idvararticulo', 'articulo', 'color', 'talla', 'sku', 'stock', 'precio_extra', 'foto','precio_final']
+        fields =  ['idvararticulo', 'articulo', 'color', 'talla', 'sku', 'stock', 'precio_extra', 'foto','precio_final', 'historial_descuentos', 'precio_con_descuento_activo']
+
+    def get_historial_descuentos(self, obj):
+        # Fetch ALL ArticuloDescuento relations for this variant
+        ads = ArticuloDescuento.objects.filter(vararticulo=obj)
+        historial = []
+        for ad in ads:
+            historial.append({
+                'iddescuento': ad.descuento.iddescuento,
+                'idartdescuento': ad.idartdescuento,
+                'nombre': ad.descuento.nombre,
+                'tipo': ad.descuento.tipo,
+                'valor': ad.descuento.valor,
+                'valido_desde': ad.descuento.valido_desde.date() if ad.descuento.valido_desde else None,
+                'valido_hasta': ad.descuento.valido_hasta.date() if ad.descuento.valido_hasta else None,
+                'cantidad_inicial': ad.cantidad_inicial,
+                'cantidad_restante': ad.cantidad_restante,
+                'estado': ad.descuento.estado
+            })
+        return historial
+
+    def get_precio_con_descuento_activo(self, obj):
+        ahora = timezone.now().date()
+        ad = ArticuloDescuento.objects.filter(
+            vararticulo=obj,
+            descuento__valido_desde__lte=ahora,
+            descuento__valido_hasta__gte=ahora,
+            descuento__estado=True
+        ).first()
+
+        precio_final = obj.precio_final
+        if ad:
+            # Como indicaste, solo usamos porcentaje
+            descuento_valor = ad.descuento.valor
+            precio_con_descuento = precio_final * (Decimal('1') - Decimal(str(descuento_valor)) / Decimal('100'))
+            return precio_con_descuento
+        return precio_final
 
 class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
     articulo = ArticulosWriteSerializer()
@@ -335,24 +373,91 @@ class ArticuloDescuentoSerializer(serializers.ModelSerializer):
 
     def get_precio_con_descuento(self, articuloDescuento):
         precio_final = articuloDescuento.vararticulo.precio_final
-        descuento = articuloDescuento.descuento.valor
-
+        descuento_valor = articuloDescuento.descuento.valor
+        descuento_tipo = articuloDescuento.descuento.tipo
         cantidad_restante = articuloDescuento.cantidad_restante
-        precio_con_descuento = precio_final * (Decimal('1')- Decimal(str(descuento)) / Decimal(100))
 
-
+        ahora = timezone.now().date()
         fecha1 = articuloDescuento.descuento.valido_desde 
         fecha2 = articuloDescuento.descuento.valido_hasta 
 
-        ahora = timezone.now().date()
-
-
-        if (ahora < fecha1 or ahora > fecha2) or cantidad_restante <= 0:
+        if (ahora < fecha1 or ahora > fecha2):
             return precio_final
+
+        #VALIDACION DE LA CANTIDAD
+        if cantidad_restante and str(cantidad_restante).strip() != "":
+            if int(cantidad_restante) <= 0:
+                return precio_final
+
+        # Convertimos a string y lower() por si acaso para la comparación
+        if str(descuento_tipo).strip().lower() == 'porcentaje':
+            precio_con_descuento = precio_final * (Decimal('1') - Decimal(str(descuento_valor)) / Decimal('100'))
+        else:
+            # Asumimos que si no es porcentaje, es un valor fijo a restar
+            precio_con_descuento = precio_final - Decimal(str(descuento_valor))
+            if precio_con_descuento < 0:
+                precio_con_descuento = Decimal('0.00')
             
         return precio_con_descuento
-            
+
+
+class ArticuloDescuentoWriteSerializer(serializers.ModelSerializer):
+    vararticulo = serializers.PrimaryKeyRelatedField(queryset=VariantesArticulos.objects.all(), required=False)
+    vararticulos = serializers.PrimaryKeyRelatedField(queryset=VariantesArticulos.objects.all(), many=True, required=False, write_only=True)
+    descuento = DescuentosSerializer()
+
+    class Meta:
+        model = ArticuloDescuento
+        fields = ['idartdescuento', 'vararticulo', 'vararticulos', 'descuento', 'cantidad_inicial', 'cantidad_restante']
+
+    def create(self, validated_data):
+        # Sacamos el diccionario anidado que llega desde React
+        datos_descuento = validated_data.pop('descuento')
+
+        lista_variantes = validated_data.pop('vararticulos', [])
+        variantes_individual = validated_data.pop('vararticulo', None)
+
+        with transaction.atomic():
+            # Creamos el Descuento
+            nuevo_descuento = Descuentos.objects.create(**datos_descuento)
+
+            if lista_variantes:
+                articulos_creados = []
+                for variante in lista_variantes:
+                    añadir = ArticuloDescuento.objects.create(
+                        descuento = nuevo_descuento,
+                        vararticulo = variante,
+                        **validated_data
+                    )
+                    articulos_creados.append(añadir)
+                return articulos_creados[0]
+
+            # Creamos la tabla intermedia con el nuevo descuento
+            elif variantes_individual:
+                añadir = ArticuloDescuento.objects.create(
+                    descuento = nuevo_descuento,
+                    vararticulo = variantes_individual,
+                    **validated_data
+                )
+                return añadir
+
+    def update(self, instance, validated_data):
+        datos_descuento = validated_data.pop('descuento', None)
         
+        with transaction.atomic():
+            # Actualizamos la tabla intermedia
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            instance.save()
+            
+            # Actualizamos el descuento anidado
+            if datos_descuento:
+                descuento_instancia = instance.descuento
+                for attr, value in datos_descuento.items():
+                    setattr(descuento_instancia, attr, value)
+                descuento_instancia.save()
+                
+            return instance
 
 
 
