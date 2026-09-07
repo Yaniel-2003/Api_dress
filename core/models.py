@@ -1,5 +1,7 @@
 import uuid
 from django.db import models
+from django.utils import timezone
+from decimal import Decimal
 
 #### TABLAS CATALOGO 
 
@@ -286,6 +288,14 @@ class Articulos(models.Model):
         return f"{self.nombre}"
 
 
+def Ruta_foto_articulo(instance, filname):
+    if hasattr(instance, 'idvararticulo'):
+        id_carpeta = instance.idvararticulo
+    else:
+        id_carpeta = instance.variante_articulo.idvararticulo
+
+    return f'Articulo{id_carpeta}/{filname}'
+
 class VariantesArticulos(models.Model):
     idvararticulo = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     articulo = models.ForeignKey('Articulos', on_delete=models.CASCADE)
@@ -294,7 +304,7 @@ class VariantesArticulos(models.Model):
     sku = models.CharField(max_length=60, unique=True)
     stock = models.IntegerField()
     precio_extra = models.DecimalField(max_digits=10, decimal_places=2)
-    foto = models.ImageField(upload_to='img_variantes', null=True, blank=True)
+    foto = models.ImageField(upload_to=Ruta_foto_articulo, null=True, blank=True)
 
     def calcular_precio(self):
         if self.precio_extra > 0:
@@ -322,8 +332,7 @@ class VariantesArticulos(models.Model):
         return f"SKU: {self.sku} - Stock: {self.stock}"
     
 
-def Ruta_foto_articulo(instance, filname):
-    return f'Articulo{instance.variante_articulo.idvararticulo}/{filname}'
+
 
 class FotoVarianteArticulo(models.Model):
     idfoto = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -341,6 +350,37 @@ class ArticuloDescuento(models.Model):
     descuento = models.ForeignKey('Descuentos', on_delete=models.CASCADE)
     cantidad_inicial = models.CharField(max_length=100, blank=True, null=True)
     cantidad_restante = models.CharField(max_length=100, blank=True, null=True)
+
+    @property
+    def precio_calculado(self):
+        precio_final = self.vararticulo.precio_final
+        descuento_valor = self.descuento.valor
+        descuento_tipo = self.descuento.tipo
+        cantidad_restante = self.cantidad_restante
+
+        ahora = timezone.now().date()
+        fecha1 = self.descuento.valido_desde.date() 
+        fecha2 = self.descuento.valido_hasta.date() 
+
+        if (ahora < fecha1 or ahora > fecha2):
+            return precio_final
+
+        #VALIDACION DE LA CANTIDAD
+        if cantidad_restante and str(cantidad_restante).strip() != "":
+            if int(cantidad_restante) <= 0:
+                return precio_final
+
+        # Convertimos a string y lower() por si acaso para la comparación
+        if str(descuento_tipo).strip().lower() == 'porcentaje':
+            precio_con_descuento = precio_final * (Decimal('1') - Decimal(str(descuento_valor)) / Decimal('100'))
+        else:
+            # Asumimos que si no es porcentaje, es un valor fijo a restar
+            precio_con_descuento = precio_final - Decimal(str(descuento_valor))
+            if precio_con_descuento < 0:
+                precio_con_descuento = Decimal('0.00')
+            
+        return precio_con_descuento
+
 
     class Meta:
         db_table = 'SH_Articulo_Descuento'

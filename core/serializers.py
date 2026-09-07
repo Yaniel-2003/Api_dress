@@ -352,9 +352,8 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
                     errores.append(f"Foto{i}: extension no permitida") 
                     continue
                 
-                if not variante.foto:
-                    variante.foto = archivo
-                    variante.save()
+                variante.foto = archivo
+                variante.save()
 
                 
                 nueva_foto = FotoVarianteArticulo(variante_articulo=variante)
@@ -363,42 +362,13 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
             return instance
 
 class ArticuloDescuentoSerializer(serializers.ModelSerializer):
-    vararticulo = VariantesArticulosListSerializer(read_only=True)
     descuento = DescuentosSerializer(read_only=True)
-    precio_con_descuento = serializers.SerializerMethodField()
+    precio_con_descuento = serializers.ReadOnlyField(source='precio_calculado')
 
     class Meta:
         model = ArticuloDescuento
         fields = ['idartdescuento', 'vararticulo', 'descuento', 'precio_con_descuento','cantidad_inicial', 'cantidad_restante']
 
-    def get_precio_con_descuento(self, articuloDescuento):
-        precio_final = articuloDescuento.vararticulo.precio_final
-        descuento_valor = articuloDescuento.descuento.valor
-        descuento_tipo = articuloDescuento.descuento.tipo
-        cantidad_restante = articuloDescuento.cantidad_restante
-
-        ahora = timezone.now().date()
-        fecha1 = articuloDescuento.descuento.valido_desde 
-        fecha2 = articuloDescuento.descuento.valido_hasta 
-
-        if (ahora < fecha1 or ahora > fecha2):
-            return precio_final
-
-        #VALIDACION DE LA CANTIDAD
-        if cantidad_restante and str(cantidad_restante).strip() != "":
-            if int(cantidad_restante) <= 0:
-                return precio_final
-
-        # Convertimos a string y lower() por si acaso para la comparación
-        if str(descuento_tipo).strip().lower() == 'porcentaje':
-            precio_con_descuento = precio_final * (Decimal('1') - Decimal(str(descuento_valor)) / Decimal('100'))
-        else:
-            # Asumimos que si no es porcentaje, es un valor fijo a restar
-            precio_con_descuento = precio_final - Decimal(str(descuento_valor))
-            if precio_con_descuento < 0:
-                precio_con_descuento = Decimal('0.00')
-            
-        return precio_con_descuento
 
 
 class ArticuloDescuentoWriteSerializer(serializers.ModelSerializer):
@@ -460,6 +430,36 @@ class ArticuloDescuentoWriteSerializer(serializers.ModelSerializer):
             return instance
 
 
+#### ENDPOINTS PARA LA VISTA PRINCIPAL
+class VarianteArticulosSerializers(serializers.ModelSerializer):
+    tallas_nombre = serializers.CharField(source='talla.codigo', read_only=True)
+    regla_tallaje = serializers.CharField(source='talla.regla_tallaje', read_only=True)
+    tipo_regla_tallaje = serializers.CharField(source='talla.tipo', read_only=True)
+    color_nombre = serializers.CharField(source='color.nombre', read_only=True)
+    articulos_nombre = serializers.CharField(source='articulo.nombre', read_only=True)
+    descripcion = serializers.CharField(source='articulo.descripcion', read_only=True)
+    descuentos_activos = serializers.SerializerMethodField()
+    class Meta:
+        model = VariantesArticulos
+        fields = [
+            'idvararticulo',
+            'regla_tallaje',
+            'descripcion',
+            'tallas_nombre',
+            'tipo_regla_tallaje',
+            'color_nombre',
+            'articulos_nombre',
+            'stock',
+            'precio_extra',
+            'foto',
+            'precio_final',
+            'descuentos_activos'
+        ]
+
+    def get_descuentos_activos(self, obj):
+        descuentos_filtrados = obj.articulodescuento_set.filter(descuento__estado=True)
+
+        return ArticuloDescuentoSerializer(descuentos_filtrados, many=True, context=self.context).data
 
         
 

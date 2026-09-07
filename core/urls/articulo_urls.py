@@ -12,4 +12,6 @@ router.register(r'descuento-articulos', ArticuloDescuentoViewSet, basename='desc
 urlpatterns = [
     path('', include(router.urls)),
     path('variantes/<uuid:idvararticulo>/fotos/', Fotos_articulos, name=('fotos-variantes')),
+    path('tienda-publica/', VariantesArticulosViewSet.as_view({'get': 'tienda_publica'}), name='tienda-publica'),
+
 ]

@@ -1,13 +1,13 @@
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from datetime import timezone
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Q
-from rest_framework.decorators import api_view, parser_classes, permission_classes
+from rest_framework.decorators import api_view, parser_classes, permission_classes, action
 import os
 
-from ..serializers import ArticulosListSerializer, ArticulosWriteSerializer, VariantesArticulosListSerializer, VariantesArticulosWriteSerializer, ArticuloDescuentoSerializer, ArticuloDescuentoWriteSerializer
+from ..serializers import ArticulosListSerializer, ArticulosWriteSerializer, VariantesArticulosListSerializer, VariantesArticulosWriteSerializer, ArticuloDescuentoSerializer, ArticuloDescuentoWriteSerializer, VarianteArticulosSerializers
 from ..models import Articulos, VariantesArticulos, ArticuloDescuento, FotoVarianteArticulo, Cat_Reglas_Tallaje, Prendas, Tallas
 from ..paginacion import PaginacionGlobal
 
@@ -80,8 +80,6 @@ class VariantesArticulosViewSet(viewsets.ModelViewSet):
             'talla'
         ).order_by('idvararticulo')
 
-       
-
         query = self.request.query_params
 
         busqueda = query.get('buscar')
@@ -103,19 +101,19 @@ class VariantesArticulosViewSet(viewsets.ModelViewSet):
 
 
         if color_id:
-            queryset = queryset.filter(color_id=color_id)
+            queryset = queryset.filter(color_id__in=color_id.split(','))
 
         if prendas_id:
-            queryset = queryset.filter(articulo__prendas_id=prendas_id)
+            queryset = queryset.filter(articulo__prendas_id__in=prendas_id.split(','))
 
         if talla_id:
-            queryset = queryset.filter(talla_id=talla_id)
+            queryset = queryset.filter(talla_id__in=talla_id.split(','))
 
         if marca_id:
-            queryset = queryset.filter(articulo__marca_id=marca_id)
+            queryset = queryset.filter(articulo__marca_id__in=marca_id.split(','))
 
         if categoria_id:
-            queryset = queryset.filter(articulo__categoria_id=categoria_id)
+            queryset = queryset.filter(articulo__categoria_id__in=categoria_id.split(','))
 
         if estado_articulo:
             es_activo = estado_articulo.lower() in ['true', '1', 'yes']
@@ -125,9 +123,31 @@ class VariantesArticulosViewSet(viewsets.ModelViewSet):
 
 
     def get_serializer_class(self):
+        if self.action == 'tienda_publica':
+            return VarianteArticulosSerializers
+        
         if self.action in ('create', 'update', 'partial_update'):
             return VariantesArticulosWriteSerializer
         return VariantesArticulosListSerializer
+
+    @action(detail=False, methods=['GET'], permission_classes=[AllowAny])
+    def tienda_publica(self, request):
+        queryset = self.get_queryset() 
+
+        queryset = queryset.filter(stock__gt=0, articulo__estado=True)
+
+        queryset = queryset.prefetch_related(
+            'articulodescuento_set',
+            'articulodescuento_set__descuento'
+        )
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
     
 
 EXTENSIONES = ['.jpg', '.png', '.jpeg']
