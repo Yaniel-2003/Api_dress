@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from decimal import Decimal
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 #### TABLAS CATALOGO 
 
@@ -191,24 +192,50 @@ class Categoria(models.Model):
 ### ESTA FUNCION ENVIA UN PERFIL (CLIENTE) POR DEFECTO CUANDO SE REINICIE 
 
 def get_perfil_cliente():
-    perfil, creado = Perfil.objects.get_or_create(nombre='cliente');
-    return perfil.idperfil
+    perfil, creado = Perfil.objects.get_or_create(nombre='cliente')
+    return perfil
 
 ### ACTUALIZAMOS EL CAMPO DE USUARIO
 
-class Usuario(models.Model):
+class UsuarioManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("El email es obligatorio")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError("Un super usuario debe de tener is_staff=True")
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError("Un super usuario debe de tener is_superuser=True")
+        return self.create_user(email, password, **extra_fields)
+
+class Usuario(AbstractBaseUser, PermissionsMixin):
     idusuario = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    documento = models.ForeignKey('NunDocumento', on_delete=models.CASCADE)
+    documento = models.ForeignKey('NunDocumento', on_delete=models.CASCADE, blank=True, null=True)
     ## AGREGAMOS LA FUNCION get_perfil_cliente
-    perfil = models.ForeignKey('Perfil', on_delete=models.PROTECT, default=get_perfil_cliente)
+    perfil = models.ForeignKey('Perfil', on_delete=models.PROTECT, blank=True, null=True)
     email = models.EmailField(max_length=254, unique=True)
-    password_hash = models.CharField(max_length=255)
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     numero = models.CharField(max_length=20)
     telefono = models.CharField(max_length=20)
-    activo = models.BooleanField(default=True)
+
+    is_active = models.BooleanField(default=True, db_column='activo')
+    is_staff = models.BooleanField(default=False)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    objects = UsuarioManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['nombres', 'apellidos']
 
     class Meta:
         db_table = "SH_Usuarios"
@@ -216,22 +243,6 @@ class Usuario(models.Model):
 
     def __str__(self):
         return f"{self.email}"
-    
-    @property
-    def is_authenticated(self):
-        return True
-
-    @property
-    def is_anonymous(self):
-        return False
-    
-    @property
-    def is_active(self):
-        return self.activo
-    
-    @property
-    def is_staff(self):
-        return self.perfil.nombre.lower() == 'Administrador'
     
 
 class Direcciones(models.Model):

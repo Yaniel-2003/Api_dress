@@ -28,8 +28,8 @@ class UsuariosViewSet(ModelViewSet):
 
         if busqueda:
             queryset = queryset.filter(
-                Q(nombre__icontains=busqueda) |
-                Q(apellido__icontains=busqueda) |
+                Q(nombres__icontains=busqueda) |
+                Q(apellidos__icontains=busqueda) |
                 Q(email__icontains=busqueda) |
                 Q(numero__icontains=busqueda)
             )
@@ -38,7 +38,7 @@ class UsuariosViewSet(ModelViewSet):
         perfil = query.get('nombre')
 
         if tipo_doc:
-            queryset = queryset.filter(NunDocumento__sigla__icontains=tipo_doc)
+            queryset = queryset.filter(documento__sigla__icontains=tipo_doc)
 
         if perfil:
             queryset = queryset.filter(Perfil__nombre__icontains=perfil)

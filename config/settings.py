@@ -33,6 +33,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'core.Usuario'
+
 
 # Application definition
 
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'core',
     'corsheaders',
 ]
@@ -146,17 +149,25 @@ CORS_ALLOWED_ORIGINS = [
 
 # Configuración para que JWT entienda que usamos idusuario y no id
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRECH_TOKEN': True,
+    'BLACKLIST_AFTER_ROTATION': True,
     'USER_ID_FIELD': 'idusuario',
     'USER_ID_CLAIM': 'user_id',
 }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'core.authentication.CustomJWTAuthentication', 
+        'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ),
 }
 
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = r'C:\Users\PC\Documents\ProyectoPython\dress-shopy\Fotos_articulos'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'no-reply@dressshopy.com'
+FRONTEND_URL = 'http://localhost:5173'

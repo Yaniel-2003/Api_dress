@@ -1,0 +1,1535 @@
+[
+{
+  "model": "core.genero",
+  "pk": "28918131-497e-46de-960e-c453e8b09c07",
+  "fields": {
+    "nombre": "Mujer",
+    "slug": "mujer",
+    "estado": true
+  }
+},
+{
+  "model": "core.genero",
+  "pk": "52c1cc90-e2c6-46a6-9084-064e9ab87056",
+  "fields": {
+    "nombre": "Unisex",
+    "slug": "unisex",
+    "estado": true
+  }
+},
+{
+  "model": "core.genero",
+  "pk": "96c82e30-61de-4e72-826f-a761c0247c92",
+  "fields": {
+    "nombre": "Hombre",
+    "slug": "hombre",
+    "estado": true
+  }
+},
+{
+  "model": "core.genero",
+  "pk": "d364e95d-f6f8-44b1-8b6d-e82be1f620b0",
+  "fields": {
+    "nombre": "Niño",
+    "slug": "nino",
+    "estado": true
+  }
+},
+{
+  "model": "core.genero",
+  "pk": "e18d6258-849e-4495-96c2-7345c25aedd0",
+  "fields": {
+    "nombre": "Niña",
+    "slug": "nina",
+    "estado": true
+  }
+},
+{
+  "model": "core.nundocumento",
+  "pk": "1a002639-ce4d-4ebf-935a-2a286fb7181f",
+  "fields": {
+    "sigla": "CE",
+    "nombre": "Cédula de Extranjería",
+    "estado": true
+  }
+},
+{
+  "model": "core.nundocumento",
+  "pk": "2c9726ad-a6d8-40a2-9070-023368cbd347",
+  "fields": {
+    "sigla": "NIT",
+    "nombre": "Número de Identificación Tributaria",
+    "estado": true
+  }
+},
+{
+  "model": "core.nundocumento",
+  "pk": "30ff3ed8-1c11-4c85-8f6c-9e8fe02bb920",
+  "fields": {
+    "sigla": "CC",
+    "nombre": "Cédula de Ciudadanía",
+    "estado": true
+  }
+},
+{
+  "model": "core.nundocumento",
+  "pk": "4c41d202-edc2-464a-954a-e5efeb2a04ca",
+  "fields": {
+    "sigla": "PPT",
+    "nombre": "Permiso por Protección Temporal",
+    "estado": true
+  }
+},
+{
+  "model": "core.nundocumento",
+  "pk": "806ad66c-9452-40a9-a40a-a7c4f6d74e1f",
+  "fields": {
+    "sigla": "PAS",
+    "nombre": "Pasaporte",
+    "estado": true
+  }
+},
+{
+  "model": "core.nundocumento",
+  "pk": "979f83c4-b821-45c8-a130-bc257bd1df5d",
+  "fields": {
+    "sigla": "TI",
+    "nombre": "Tarjeta de Identidad",
+    "estado": true
+  }
+},
+{
+  "model": "core.nundocumento",
+  "pk": "9c972389-3cee-4f63-9000-21347f02914e",
+  "fields": {
+    "sigla": "PEP",
+    "nombre": "Permiso Especial de Permanencia",
+    "estado": true
+  }
+},
+{
+  "model": "core.perfil",
+  "pk": "597ddb7f-2537-40bb-a976-bc2152685cf5",
+  "fields": {
+    "nombre": "Operador",
+    "descripcion": "Operador encargado de guardar los artículos",
+    "activo": true
+  }
+},
+{
+  "model": "core.perfil",
+  "pk": "8d7a85e5-0287-4802-ac21-dfc1baa6816b",
+  "fields": {
+    "nombre": "Cliente",
+    "descripcion": "Cliente que realiza las compras",
+    "activo": true
+  }
+},
+{
+  "model": "core.perfil",
+  "pk": "9b39660d-d046-42d1-b81b-7cd594b4e885",
+  "fields": {
+    "nombre": "Administrador",
+    "descripcion": "Administrador del sistema",
+    "activo": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "012fab60-daf2-4643-99e6-d3c524ac961c",
+  "fields": {
+    "nombre": "American Eagle",
+    "slug": "american-eagle",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "18d23be4-2f25-421b-a796-305a2b73864e",
+  "fields": {
+    "nombre": "Adidas",
+    "slug": "adidas",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "4338fcc5-dd88-480a-a601-b9e4146464e5",
+  "fields": {
+    "nombre": "Calvin Klein",
+    "slug": "calvin-klein",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "583733a7-fec8-43fb-bd85-ae968f826168",
+  "fields": {
+    "nombre": "H&M",
+    "slug": "h-m",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "68ed2b33-a2b8-49f8-8d3a-77110ca43c2c",
+  "fields": {
+    "nombre": "Zara",
+    "slug": "zara",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "711671c6-11d2-4ef1-a730-b63aac6b9530",
+  "fields": {
+    "nombre": "Nike",
+    "slug": "nike",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "89f507b3-a6d9-4a89-ba51-57e08e4a6fe0",
+  "fields": {
+    "nombre": "Bershka",
+    "slug": "bershka",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "8fe7f3f0-c5cf-46f9-b441-07bc692cf854",
+  "fields": {
+    "nombre": "Tommy Hilfiger",
+    "slug": "tommy-hilfiger",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "a2deac65-f6c5-4604-a040-36356692386a",
+  "fields": {
+    "nombre": "Levi's",
+    "slug": "levis",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.marcas",
+  "pk": "f0274fd7-e720-4afc-b329-3160a652760e",
+  "fields": {
+    "nombre": "Pull&Bear",
+    "slug": "pull-bear",
+    "descripcion": "",
+    "estado": true
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "106fe7cb-b549-4bc0-9496-71b81d4e6431",
+  "fields": {
+    "nombre": "Rojo Cereza",
+    "hex_code": "#D2042D"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "1690cecb-ecd5-464f-b5dd-a4f8b5326e04",
+  "fields": {
+    "nombre": "Verde Esmeralda",
+    "hex_code": "#50C878"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "59125355-8472-414d-9715-9fc4296acc5d",
+  "fields": {
+    "nombre": "Verde Militar",
+    "hex_code": "#4B5320"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "8573192d-b84a-4454-8241-a17632a48508",
+  "fields": {
+    "nombre": "Negro",
+    "hex_code": "#000000"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "8c166c08-38c2-42be-8d97-cd5eec64e0e4",
+  "fields": {
+    "nombre": "Azul Marino",
+    "hex_code": "#000080"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "94d07627-2cba-4b5a-ab84-df462ce6dbad",
+  "fields": {
+    "nombre": "Blanco",
+    "hex_code": "#FFFFFF"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "a1b88206-b832-4e69-807c-2dabc70c86a6",
+  "fields": {
+    "nombre": "Café Chocolate",
+    "hex_code": "#4B3621"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "a87f332d-564e-42f7-bab5-d243f7412fd1",
+  "fields": {
+    "nombre": "Gris Oxford",
+    "hex_code": "#4A4A4A"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "aa293e72-0f5d-4204-ac86-5205375a2289",
+  "fields": {
+    "nombre": "Violeta",
+    "hex_code": "#8A2BE2"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "c36030d5-d3fe-4251-9062-2cb408e763da",
+  "fields": {
+    "nombre": "Azul Rey",
+    "hex_code": "#4169E1"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "c8088bff-c329-4c7b-9f9e-6127f00bc489",
+  "fields": {
+    "nombre": "Gris Melange",
+    "hex_code": "#B0B0B0"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "c91746ec-630c-49fa-9fae-5caa7bab55fc",
+  "fields": {
+    "nombre": "Beige",
+    "hex_code": "#F5F5DC"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "d7555262-27aa-4d26-8f88-f133b2f1b6c1",
+  "fields": {
+    "nombre": "Naranja",
+    "hex_code": "#FFA500"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "d7d37bbe-f6d1-4712-a2c8-51b8fe7a2062",
+  "fields": {
+    "nombre": "Azul Celeste",
+    "hex_code": "#87CEEB"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "de6d8eb0-66f0-4f37-8f32-8aee726c1ea5",
+  "fields": {
+    "nombre": "Vinotinto",
+    "hex_code": "#800020"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "df7be39b-0303-43cb-a2ce-c2fda23b88ad",
+  "fields": {
+    "nombre": "Amarillo Mostaza",
+    "hex_code": "#FFDB58"
+  }
+},
+{
+  "model": "core.colores",
+  "pk": "f18dac2c-0ca1-476e-9205-072a54e5dbb3",
+  "fields": {
+    "nombre": "Rosado Pastel",
+    "hex_code": "#FFD1DC"
+  }
+},
+{
+  "model": "core.cat_reglas_tallaje",
+  "pk": "33ebed6a-f972-4bae-a2c5-fa85330e02ff",
+  "fields": {
+    "nombre": "Cuerpo Entero",
+    "descripcion": "Vestidos, overoles, trajes de baño",
+    "estado": true
+  }
+},
+{
+  "model": "core.cat_reglas_tallaje",
+  "pk": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+  "fields": {
+    "nombre": "Parte Superior",
+    "descripcion": "Camisas, blusas, chaquetas",
+    "estado": true
+  }
+},
+{
+  "model": "core.cat_reglas_tallaje",
+  "pk": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+  "fields": {
+    "nombre": "Parte Inferior",
+    "descripcion": "Pantalones, shorts, faldas",
+    "estado": true
+  }
+},
+{
+  "model": "core.cat_reglas_tallaje",
+  "pk": "cce795c7-8c56-43bd-9498-d6e62d22d2ee",
+  "fields": {
+    "nombre": "Accesorios",
+    "descripcion": "Medias, bufandas",
+    "estado": true
+  }
+},
+{
+  "model": "core.cat_reglas_tallaje",
+  "pk": "e535739b-6ce2-4127-8c46-9b3ade4d3658",
+  "fields": {
+    "nombre": "Ropa Interior",
+    "descripcion": "Ropa íntima",
+    "estado": true
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "071a9fa3-233e-419f-9e88-20bf9f3a2055",
+  "fields": {
+    "regla_tallaje": "33ebed6a-f972-4bae-a2c5-fa85330e02ff",
+    "nombre": "Bata de baño",
+    "slug": "bata-baño"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "08ad97e5-8b2e-4906-b9a0-e4b9e19fb5cf",
+  "fields": {
+    "regla_tallaje": null,
+    "nombre": "Traje",
+    "slug": "traje"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "3c393041-53de-409b-b12b-aca42d48308d",
+  "fields": {
+    "regla_tallaje": null,
+    "nombre": "Sudadera",
+    "slug": "sudadera"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "5070631f-d5f6-4792-961a-dc5926b457d2",
+  "fields": {
+    "regla_tallaje": "33ebed6a-f972-4bae-a2c5-fa85330e02ff",
+    "nombre": "Overol",
+    "slug": "overol"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "5513ee4f-b762-4a1f-9773-86d712760a0d",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "nombre": "Shorts",
+    "slug": "shorts"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "5f4d20a0-639d-4aeb-8e45-9fe9b4acae30",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Blusa",
+    "slug": "blusa"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "61d61387-3f1b-48b6-941b-6c8557f72627",
+  "fields": {
+    "regla_tallaje": "33ebed6a-f972-4bae-a2c5-fa85330e02ff",
+    "nombre": "Traje de baño",
+    "slug": "traje-bano"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "66538629-be3d-4a79-99da-709f8455195f",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Abrigo",
+    "slug": "abrigo"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "72943dec-ce0e-419d-8ba5-94441369b707",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "nombre": "Falda",
+    "slug": "falda"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "7b5dcbe6-a1a9-4fdc-88c3-35aa14b6ccd6",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Camisa",
+    "slug": "camisa"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "9018dd4b-18db-4b3f-ba02-d62ad3473b37",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "nombre": "Leggings",
+    "slug": "leggings"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "b364c3bd-c14b-4814-b53a-b8688c732860",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "nombre": "Pantalón",
+    "slug": "pantalon"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "b3ae33e9-a50a-495b-9979-fb8796f170d2",
+  "fields": {
+    "regla_tallaje": null,
+    "nombre": "Ropa deportiva",
+    "slug": "deporte"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "b57182ee-d7e1-46bc-aad0-b9baca9b1201",
+  "fields": {
+    "regla_tallaje": null,
+    "nombre": "Pijama",
+    "slug": "pijama"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "b964edd3-ec3f-4402-8292-798fa954f389",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Chaleco",
+    "slug": "chaleco"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "bae56ffb-b6ca-489d-8025-27fd207ef410",
+  "fields": {
+    "regla_tallaje": "33ebed6a-f972-4bae-a2c5-fa85330e02ff",
+    "nombre": "Vestido",
+    "slug": "vestido"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "c294575c-4d7e-4a99-bb8c-e20c7d7d8544",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Top",
+    "slug": "top"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "cecbf7f9-0d58-4138-8563-37983577238d",
+  "fields": {
+    "regla_tallaje": "cce795c7-8c56-43bd-9498-d6e62d22d2ee",
+    "nombre": "Medias",
+    "slug": "medias"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "da45d9d1-e510-4ede-af9b-4596439ca9f9",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Ropa interior",
+    "slug": "ropa-interior"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "e28deb27-b8ac-49cf-899d-62e7ec3bca42",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Chaqueta",
+    "slug": "chaqueta"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "e7f58427-753f-4a7e-94c7-662da97c35d3",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Camiseta",
+    "slug": "camiseta"
+  }
+},
+{
+  "model": "core.prendas",
+  "pk": "e9d1d6e2-04b3-434e-89e6-1ffb4b8b8ae1",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "nombre": "Suéter",
+    "slug": "sueter"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "096272f3-1e1b-4d12-ad76-63f1db0102ee",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "codigo": "28",
+    "descripcion": "Talla 28",
+    "tipo": "Pantalón"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "096cdc28-78ee-4e3e-abe9-c9de3cc14758",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "codigo": "XS",
+    "descripcion": "Extra Pequeña",
+    "tipo": "Camisa"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "0ba6a8b6-f574-4c17-919e-bdd2dbc94ff5",
+  "fields": {
+    "regla_tallaje": "cce795c7-8c56-43bd-9498-d6e62d22d2ee",
+    "codigo": "42",
+    "descripcion": "Talla 42",
+    "tipo": "Calzado"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "1edbc4f4-95f6-4e10-b4fc-fceea4d9e950",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "codigo": "M",
+    "descripcion": "Mediana",
+    "tipo": "Camisa"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "28ee821d-68e1-4541-82e4-6fe7c72667e0",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "codigo": "32",
+    "descripcion": "Talla 32",
+    "tipo": "Pantalón"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "32b7a5c0-b404-4551-8c12-5f722d486ee1",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "codigo": "XL",
+    "descripcion": "Extra Grande",
+    "tipo": "Camisa"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "35884a9d-caa0-43c8-85d3-1f7cff4249bc",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "codigo": "36",
+    "descripcion": "Talla 36",
+    "tipo": "Pantalón"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "36fcceac-f49b-4bb4-bdad-a4bd96320960",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "codigo": "30",
+    "descripcion": "Talla 30",
+    "tipo": "Pantalón"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "45b3b9c8-140a-48cb-8ecb-3b8182c2c97f",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "codigo": "S",
+    "descripcion": "Pequeña",
+    "tipo": "Camisa"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "5fd4a9e0-2b8c-42e7-bcb7-73537f2f6fc8",
+  "fields": {
+    "regla_tallaje": "3e427cf0-3c45-4a3f-99c6-08f80881d52c",
+    "codigo": "L",
+    "descripcion": "Grande",
+    "tipo": "Camisa"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "83ac6fcb-44b2-4067-8dd4-adfbc1883a18",
+  "fields": {
+    "regla_tallaje": "cce795c7-8c56-43bd-9498-d6e62d22d2ee",
+    "codigo": "38",
+    "descripcion": "Talla 38",
+    "tipo": "Calzado"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "d410f4b3-ea37-462e-8db2-18d14a3f78ae",
+  "fields": {
+    "regla_tallaje": "cce795c7-8c56-43bd-9498-d6e62d22d2ee",
+    "codigo": "40",
+    "descripcion": "Talla 40",
+    "tipo": "Calzado"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "d9e5be31-cd06-43ce-9da9-93f0be6819e8",
+  "fields": {
+    "regla_tallaje": "595a5665-6a90-4c84-a963-6fc6f3384c0c",
+    "codigo": "34",
+    "descripcion": "Talla 34",
+    "tipo": "Pantalón"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "dd4a45af-77ad-4ecf-8b00-9fe9fdab04a5",
+  "fields": {
+    "regla_tallaje": "cce795c7-8c56-43bd-9498-d6e62d22d2ee",
+    "codigo": "39",
+    "descripcion": "Talla 39",
+    "tipo": "Calzado"
+  }
+},
+{
+  "model": "core.tallas",
+  "pk": "e41ed260-151e-410d-b5b2-afd067cfa5f4",
+  "fields": {
+    "regla_tallaje": "cce795c7-8c56-43bd-9498-d6e62d22d2ee",
+    "codigo": "41",
+    "descripcion": "Talla 41",
+    "tipo": "Calzado"
+  }
+},
+{
+  "model": "core.impuestos",
+  "pk": "1b8e1ede-7693-4ac7-b7db-2ee9e2658f1e",
+  "fields": {
+    "nombre": "IVA Reducido",
+    "porcentaje": "5.00",
+    "estado": true
+  }
+},
+{
+  "model": "core.impuestos",
+  "pk": "2819f0a7-7b9f-4c03-ba21-5c4af2a7838b",
+  "fields": {
+    "nombre": "IVA Exento",
+    "porcentaje": "0.00",
+    "estado": true
+  }
+},
+{
+  "model": "core.impuestos",
+  "pk": "addd5fa6-65d4-4ed6-8d41-790b975b378f",
+  "fields": {
+    "nombre": "IVA General",
+    "porcentaje": "19.00",
+    "estado": true
+  }
+},
+{
+  "model": "core.descuentos",
+  "pk": "001b3bb9-0148-4175-9bd9-b36c1bf2397d",
+  "fields": {
+    "nombre": "DIA DEL PADRE",
+    "tipo": "Porcentaje",
+    "valor": "50.00",
+    "valido_desde": "2026-08-23T00:00:00Z",
+    "valido_hasta": "2026-08-27T00:00:00Z",
+    "estado": true
+  }
+},
+{
+  "model": "core.descuentos",
+  "pk": "0e322011-043d-4854-8412-532d6736b1d8",
+  "fields": {
+    "nombre": "Descuento numero 2",
+    "tipo": "Porcentaje",
+    "valor": "50.00",
+    "valido_desde": "2026-08-30T00:00:00Z",
+    "valido_hasta": "2026-09-15T00:00:00Z",
+    "estado": true
+  }
+},
+{
+  "model": "core.descuentos",
+  "pk": "1eb15417-2e75-49f7-9406-f0a241a3708c",
+  "fields": {
+    "nombre": "Primer descuento",
+    "tipo": "Camisa",
+    "valor": "20.00",
+    "valido_desde": "2026-09-05T00:00:00Z",
+    "valido_hasta": "2026-09-11T00:00:00Z",
+    "estado": true
+  }
+},
+{
+  "model": "core.descuentos",
+  "pk": "54c2c40e-b629-4343-b31c-30fb08cc98b0",
+  "fields": {
+    "nombre": "DIA DE LAS MADRES",
+    "tipo": "Porcentaje",
+    "valor": "20.00",
+    "valido_desde": "2026-09-05T00:00:00Z",
+    "valido_hasta": "2026-09-15T00:00:00Z",
+    "estado": true
+  }
+},
+{
+  "model": "core.descuentos",
+  "pk": "e83546f9-3fb8-4781-a8e4-4b4a408005c6",
+  "fields": {
+    "nombre": "Descuento dia de las madres",
+    "tipo": "Porcentaje",
+    "valor": "30.00",
+    "valido_desde": "2026-08-24T00:00:00Z",
+    "valido_hasta": "2026-08-31T00:00:00Z",
+    "estado": false
+  }
+},
+{
+  "model": "core.categoria",
+  "pk": "5ae4cf83-862a-417f-a907-c4a1e96d436d",
+  "fields": {
+    "genero": "96c82e30-61de-4e72-826f-a761c0247c92",
+    "padre": null,
+    "nombre": "Ropa hombre",
+    "slug": "ropa-hombre",
+    "estado": true
+  }
+},
+{
+  "model": "core.categoria",
+  "pk": "754074ad-3d65-463d-8ff3-3d5c8ef263af",
+  "fields": {
+    "genero": "52c1cc90-e2c6-46a6-9084-064e9ab87056",
+    "padre": null,
+    "nombre": "Ropa unisex",
+    "slug": "ropa-unisex",
+    "estado": true
+  }
+},
+{
+  "model": "core.categoria",
+  "pk": "80f25b38-26a8-4a1c-b2d4-fe68dafc9c65",
+  "fields": {
+    "genero": "28918131-497e-46de-960e-c453e8b09c07",
+    "padre": null,
+    "nombre": "Ropa mujer",
+    "slug": "ropa-mujer",
+    "estado": true
+  }
+},
+{
+  "model": "core.categoria",
+  "pk": "e6b451b6-5b36-4870-80dd-95aabd345806",
+  "fields": {
+    "genero": "e18d6258-849e-4495-96c2-7345c25aedd0",
+    "padre": null,
+    "nombre": "Ropa niña",
+    "slug": "ropa-nina",
+    "estado": true
+  }
+},
+{
+  "model": "core.categoria",
+  "pk": "f125876c-79df-4275-8dff-c03a980ec2d5",
+  "fields": {
+    "genero": "d364e95d-f6f8-44b1-8b6d-e82be1f620b0",
+    "padre": null,
+    "nombre": "Ropa niño",
+    "slug": "ropa-nino",
+    "estado": true
+  }
+},
+{
+  "model": "core.articulos",
+  "pk": "001cd89e-5d85-45fb-8bb2-44a2eca7af87",
+  "fields": {
+    "marca": "8fe7f3f0-c5cf-46f9-b441-07bc692cf854",
+    "categoria": "5ae4cf83-862a-417f-a907-c4a1e96d436d",
+    "impuestos": "addd5fa6-65d4-4ed6-8d41-790b975b378f",
+    "prendas": "b364c3bd-c14b-4814-b53a-b8688c732860",
+    "nombre": "Pantalon Carpintero",
+    "slug": "pantalon-carpintero",
+    "descripcion": "Pantalon tipo carpintero",
+    "precio_base": "100000.00",
+    "estado": true,
+    "fecha_creacion": "2026-08-02T00:22:46.597Z"
+  }
+},
+{
+  "model": "core.articulos",
+  "pk": "12d65311-7892-4e1f-a737-599f71f8eb49",
+  "fields": {
+    "marca": "89f507b3-a6d9-4a89-ba51-57e08e4a6fe0",
+    "categoria": "80f25b38-26a8-4a1c-b2d4-fe68dafc9c65",
+    "impuestos": "addd5fa6-65d4-4ed6-8d41-790b975b378f",
+    "prendas": "61d61387-3f1b-48b6-941b-6c8557f72627",
+    "nombre": "Short",
+    "slug": "short",
+    "descripcion": "Short veraniego",
+    "precio_base": "50000.00",
+    "estado": true,
+    "fecha_creacion": "2026-07-20T13:50:48.551Z"
+  }
+},
+{
+  "model": "core.articulos",
+  "pk": "309fb16a-16b5-4c20-af40-0ffb0bafbb8c",
+  "fields": {
+    "marca": "18d23be4-2f25-421b-a796-305a2b73864e",
+    "categoria": "80f25b38-26a8-4a1c-b2d4-fe68dafc9c65",
+    "impuestos": "addd5fa6-65d4-4ed6-8d41-790b975b378f",
+    "prendas": "e7f58427-753f-4a7e-94c7-662da97c35d3",
+    "nombre": "Camisa",
+    "slug": "camisa",
+    "descripcion": "Tipo polo",
+    "precio_base": "1500000.00",
+    "estado": true,
+    "fecha_creacion": "2026-07-19T21:08:07.739Z"
+  }
+},
+{
+  "model": "core.articulos",
+  "pk": "3f4ba320-21a5-4871-80bd-384479296735",
+  "fields": {
+    "marca": "583733a7-fec8-43fb-bd85-ae968f826168",
+    "categoria": "5ae4cf83-862a-417f-a907-c4a1e96d436d",
+    "impuestos": "addd5fa6-65d4-4ed6-8d41-790b975b378f",
+    "prendas": "b364c3bd-c14b-4814-b53a-b8688c732860",
+    "nombre": "Pantalon cargo",
+    "slug": "pantalon-cargo",
+    "descripcion": "Pantalor cargo material de tela extra ligera",
+    "precio_base": "100000.00",
+    "estado": true,
+    "fecha_creacion": "2026-08-02T00:13:45.554Z"
+  }
+},
+{
+  "model": "core.articulos",
+  "pk": "5ea4e04e-8429-4756-b06f-712e700ab705",
+  "fields": {
+    "marca": "012fab60-daf2-4643-99e6-d3c524ac961c",
+    "categoria": "80f25b38-26a8-4a1c-b2d4-fe68dafc9c65",
+    "impuestos": "addd5fa6-65d4-4ed6-8d41-790b975b378f",
+    "prendas": "7b5dcbe6-a1a9-4fdc-88c3-35aa14b6ccd6",
+    "nombre": "Camiseta",
+    "slug": "camiseta",
+    "descripcion": "prueba",
+    "precio_base": "100000.00",
+    "estado": true,
+    "fecha_creacion": "2026-08-02T00:24:25.075Z"
+  }
+},
+{
+  "model": "core.articulos",
+  "pk": "acb85340-b75f-4f01-8a09-218c82f094a8",
+  "fields": {
+    "marca": "18d23be4-2f25-421b-a796-305a2b73864e",
+    "categoria": "5ae4cf83-862a-417f-a907-c4a1e96d436d",
+    "impuestos": "addd5fa6-65d4-4ed6-8d41-790b975b378f",
+    "prendas": "7b5dcbe6-a1a9-4fdc-88c3-35aa14b6ccd6",
+    "nombre": "Camiseta Polo",
+    "slug": "camiseta-polo",
+    "descripcion": "Camisa polo con diferentes detalles",
+    "precio_base": "550000.00",
+    "estado": true,
+    "fecha_creacion": "2026-08-02T00:04:51.154Z"
+  }
+},
+{
+  "model": "core.articulos",
+  "pk": "b90da714-dc9b-4a21-b097-64ba13483e2f",
+  "fields": {
+    "marca": "a2deac65-f6c5-4604-a040-36356692386a",
+    "categoria": "80f25b38-26a8-4a1c-b2d4-fe68dafc9c65",
+    "impuestos": "addd5fa6-65d4-4ed6-8d41-790b975b378f",
+    "prendas": "b364c3bd-c14b-4814-b53a-b8688c732860",
+    "nombre": "Pantalo cargo",
+    "slug": "pantalo-cargo",
+    "descripcion": "pantalon tipo cargo",
+    "precio_base": "150000.00",
+    "estado": true,
+    "fecha_creacion": "2026-07-20T13:45:18.516Z"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "090d6de2-9f5e-4131-90b8-c191f729f7dc",
+  "fields": {
+    "articulo": "309fb16a-16b5-4c20-af40-0ffb0bafbb8c",
+    "color": "de6d8eb0-66f0-4f37-8f32-8aee726c1ea5",
+    "talla": "5fd4a9e0-2b8c-42e7-bcb7-73537f2f6fc8",
+    "sku": "HOLA123CO65",
+    "stock": 200,
+    "precio_extra": "650000.00",
+    "foto": "Articulo090d6de2-9f5e-4131-90b8-c191f729f7dc/real_U36Xgnw.jpeg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "0c1b8614-505c-4237-b144-52b81ada2d33",
+  "fields": {
+    "articulo": "001cd89e-5d85-45fb-8bb2-44a2eca7af87",
+    "color": "c36030d5-d3fe-4251-9062-2cb408e763da",
+    "talla": "28ee821d-68e1-4541-82e4-6fe7c72667e0",
+    "sku": "PRU01SKU",
+    "stock": 200,
+    "precio_extra": "45000.00",
+    "foto": "img_variantes/favicon-dress_qLKqtNC.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+  "fields": {
+    "articulo": "acb85340-b75f-4f01-8a09-218c82f094a8",
+    "color": "d7d37bbe-f6d1-4712-a2c8-51b8fe7a2062",
+    "talla": "45b3b9c8-140a-48cb-8ecb-3b8182c2c97f",
+    "sku": "SKUPRUEBA04",
+    "stock": 500,
+    "precio_extra": "50000.00",
+    "foto": "img_variantes/favicon-dress_TsTv7oy.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+  "fields": {
+    "articulo": "acb85340-b75f-4f01-8a09-218c82f094a8",
+    "color": "d7d37bbe-f6d1-4712-a2c8-51b8fe7a2062",
+    "talla": "5fd4a9e0-2b8c-42e7-bcb7-73537f2f6fc8",
+    "sku": "SKUPREUBA05",
+    "stock": 600,
+    "precio_extra": "89000.00",
+    "foto": "img_variantes/favicon-dress_1tRbO0l.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "671eb6cc-0f24-442a-b8ab-57caad4018c7",
+  "fields": {
+    "articulo": "001cd89e-5d85-45fb-8bb2-44a2eca7af87",
+    "color": "d7d37bbe-f6d1-4712-a2c8-51b8fe7a2062",
+    "talla": "35884a9d-caa0-43c8-85d3-1f7cff4249bc",
+    "sku": "PRU02SKU",
+    "stock": 100,
+    "precio_extra": "99000.00",
+    "foto": "img_variantes/favicon-dress_wSHoGVW.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "753edb52-4cde-4d45-8ad1-229c66acc82c",
+  "fields": {
+    "articulo": "12d65311-7892-4e1f-a737-599f71f8eb49",
+    "color": "c91746ec-630c-49fa-9fae-5caa7bab55fc",
+    "talla": "d9e5be31-cd06-43ce-9da9-93f0be6819e8",
+    "sku": "SO9856135RT",
+    "stock": 400,
+    "precio_extra": "20000.00",
+    "foto": "Articulo753edb52-4cde-4d45-8ad1-229c66acc82c/yo.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "85657e65-48e7-486a-8010-dfa09be59d7a",
+  "fields": {
+    "articulo": "5ea4e04e-8429-4756-b06f-712e700ab705",
+    "color": "d7555262-27aa-4d26-8f88-f133b2f1b6c1",
+    "talla": "096cdc28-78ee-4e3e-abe9-c9de3cc14758",
+    "sku": "234SDFDSF",
+    "stock": 100,
+    "precio_extra": "90000.00",
+    "foto": "img_variantes/favicon-dress_LKnykGo.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "88e3159b-2823-4519-848b-9d975dd9b110",
+  "fields": {
+    "articulo": "3f4ba320-21a5-4871-80bd-384479296735",
+    "color": "8573192d-b84a-4454-8241-a17632a48508",
+    "talla": "096272f3-1e1b-4d12-ad76-63f1db0102ee",
+    "sku": "PREUBA01SKU",
+    "stock": 200,
+    "precio_extra": "45000.00",
+    "foto": "Articulo88e3159b-2823-4519-848b-9d975dd9b110/real.jpeg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "918eba77-d0e0-44ae-966c-e4a31cc0a8d8",
+  "fields": {
+    "articulo": "acb85340-b75f-4f01-8a09-218c82f094a8",
+    "color": "106fe7cb-b549-4bc0-9496-71b81d4e6431",
+    "talla": "096cdc28-78ee-4e3e-abe9-c9de3cc14758",
+    "sku": "SKUPREUNA01",
+    "stock": 200,
+    "precio_extra": "160000.00",
+    "foto": "img_variantes/favicon-dress_BlPoSjb.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+  "fields": {
+    "articulo": "acb85340-b75f-4f01-8a09-218c82f094a8",
+    "color": "c91746ec-630c-49fa-9fae-5caa7bab55fc",
+    "talla": "32b7a5c0-b404-4551-8c12-5f722d486ee1",
+    "sku": "SKUPREUBA03",
+    "stock": 300,
+    "precio_extra": "99000.00",
+    "foto": "img_variantes/favicon-dress_FpcX4mc.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "acd1f940-4071-4a2a-979c-7fc64380420c",
+  "fields": {
+    "articulo": "3f4ba320-21a5-4871-80bd-384479296735",
+    "color": "c36030d5-d3fe-4251-9062-2cb408e763da",
+    "talla": "28ee821d-68e1-4541-82e4-6fe7c72667e0",
+    "sku": "SKU02PRUEBA",
+    "stock": 100,
+    "precio_extra": "99000.00",
+    "foto": "img_variantes/favicon-dress_T7GHci3.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "b8f22930-3fda-4f28-a025-ea00940b0c41",
+  "fields": {
+    "articulo": "acb85340-b75f-4f01-8a09-218c82f094a8",
+    "color": "d7555262-27aa-4d26-8f88-f133b2f1b6c1",
+    "talla": "1edbc4f4-95f6-4e10-b4fc-fceea4d9e950",
+    "sku": "SKUPREUBA02",
+    "stock": 250,
+    "precio_extra": "20000.00",
+    "foto": "img_variantes/favicon-dress_uwchkmV.jpg"
+  }
+},
+{
+  "model": "core.variantesarticulos",
+  "pk": "e3974861-a2cf-474e-a25a-674c58192a2d",
+  "fields": {
+    "articulo": "b90da714-dc9b-4a21-b097-64ba13483e2f",
+    "color": "c8088bff-c329-4c7b-9f9e-6127f00bc489",
+    "talla": "d9e5be31-cd06-43ce-9da9-93f0be6819e8",
+    "sku": "CAR58469GO",
+    "stock": 100,
+    "precio_extra": "20000.00",
+    "foto": "img_variantes/real_7Ug1EkG.jpeg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "00fba571-e612-46d0-89b7-8ebe5c7ad409",
+  "fields": {
+    "variante_articulo": "85657e65-48e7-486a-8010-dfa09be59d7a",
+    "archivo": "Articulo85657e65-48e7-486a-8010-dfa09be59d7a/real.jpeg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "01c522f1-aa4f-4d70-a787-1709fbe828fc",
+  "fields": {
+    "variante_articulo": "acd1f940-4071-4a2a-979c-7fc64380420c",
+    "archivo": "Articuloacd1f940-4071-4a2a-979c-7fc64380420c/favicon-dress.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "0795d558-9b0e-4ed6-9b33-8df81d32b995",
+  "fields": {
+    "variante_articulo": "acd1f940-4071-4a2a-979c-7fc64380420c",
+    "archivo": "Articuloacd1f940-4071-4a2a-979c-7fc64380420c/favicon-s.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "1055e42c-a5a3-4680-a370-9dc600d61ba4",
+  "fields": {
+    "variante_articulo": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+    "archivo": "Articulo9833236d-d6ba-47be-b2df-44d2b8d56f97/favicon-s_YulHBha.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "12609871-01d5-4176-8e94-aaea63e9b98f",
+  "fields": {
+    "variante_articulo": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+    "archivo": "Articulo42c938aa-7778-4509-9ced-d9dcd5301eee/favicon-s_BmklrPa.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "14a03ec2-048c-4f70-b950-0162fd624c90",
+  "fields": {
+    "variante_articulo": "671eb6cc-0f24-442a-b8ab-57caad4018c7",
+    "archivo": "Articulo671eb6cc-0f24-442a-b8ab-57caad4018c7/favicon-s.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "1c6dd2f4-ba19-4793-adbe-f648bbe82f72",
+  "fields": {
+    "variante_articulo": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+    "archivo": "Articulo42c938aa-7778-4509-9ced-d9dcd5301eee/favicon-s_k76oOeb.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "1dc6eadc-de8b-42dd-8680-ec16b4219d66",
+  "fields": {
+    "variante_articulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "archivo": "Articulo33bf5bae-b1c9-41ab-b999-32b784451b56/favicon-s_KRwY9Tf.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "1eca9bba-f7fc-4c22-84ed-a12750da8caa",
+  "fields": {
+    "variante_articulo": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+    "archivo": "Articulo42c938aa-7778-4509-9ced-d9dcd5301eee/favicon-s_7jPe0KY.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "24e2f6bb-b18f-4dc5-9206-def191b12154",
+  "fields": {
+    "variante_articulo": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+    "archivo": "Articulo9833236d-d6ba-47be-b2df-44d2b8d56f97/favicon-s_RRBoGyN.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "3dcc47af-10c5-4d2e-9f73-68f86a03a338",
+  "fields": {
+    "variante_articulo": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+    "archivo": "Articulo42c938aa-7778-4509-9ced-d9dcd5301eee/favicon-dress_okks80C.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "41b89bcc-a488-4761-b576-8699ee7d77c7",
+  "fields": {
+    "variante_articulo": "753edb52-4cde-4d45-8ad1-229c66acc82c",
+    "archivo": "Articulo753edb52-4cde-4d45-8ad1-229c66acc82c/yo_WtrZrJa.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "4f2ae8ea-56ae-4839-b3a9-1acaeb7e40d8",
+  "fields": {
+    "variante_articulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "archivo": "Articulo33bf5bae-b1c9-41ab-b999-32b784451b56/favicon-dress_0LXOKtH.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "56be95eb-9c5b-4870-bfc1-1de6ccce597c",
+  "fields": {
+    "variante_articulo": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+    "archivo": "Articulo9833236d-d6ba-47be-b2df-44d2b8d56f97/favicon-dress_kroEuTJ.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "5882302c-87c3-4a9f-a514-e24c733c3bb7",
+  "fields": {
+    "variante_articulo": "671eb6cc-0f24-442a-b8ab-57caad4018c7",
+    "archivo": "Articulo671eb6cc-0f24-442a-b8ab-57caad4018c7/favicon-dress.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "5fe12bf0-d13b-495c-a37f-c3ce46af64c3",
+  "fields": {
+    "variante_articulo": "0c1b8614-505c-4237-b144-52b81ada2d33",
+    "archivo": "Articulo0c1b8614-505c-4237-b144-52b81ada2d33/real.jpeg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "778e64dc-66e5-466b-9a2f-e6817a63327b",
+  "fields": {
+    "variante_articulo": "88e3159b-2823-4519-848b-9d975dd9b110",
+    "archivo": "Articulo88e3159b-2823-4519-848b-9d975dd9b110/real_B5b3cCV.jpeg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "83c36c78-ffc7-4d27-8bc8-dd2626a34261",
+  "fields": {
+    "variante_articulo": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+    "archivo": "Articulo9833236d-d6ba-47be-b2df-44d2b8d56f97/favicon-s.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "871644be-9936-44ee-89f9-dbd3025a8b2a",
+  "fields": {
+    "variante_articulo": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+    "archivo": "Articulo42c938aa-7778-4509-9ced-d9dcd5301eee/favicon-dress_soxolwp.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "8c0de378-4033-457e-8052-b475d5b6d9f4",
+  "fields": {
+    "variante_articulo": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+    "archivo": "Articulo42c938aa-7778-4509-9ced-d9dcd5301eee/favicon-s.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "8e936171-981f-418e-a75f-44211d9e749b",
+  "fields": {
+    "variante_articulo": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+    "archivo": "Articulo9833236d-d6ba-47be-b2df-44d2b8d56f97/favicon-dress_8BQv28l.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "90759d82-e0a3-479f-89d0-be8e3d6ae230",
+  "fields": {
+    "variante_articulo": "090d6de2-9f5e-4131-90b8-c191f729f7dc",
+    "archivo": "Articulo090d6de2-9f5e-4131-90b8-c191f729f7dc/real_BNByIow.jpeg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "96381a01-bbc8-47c7-bd11-63b792a77732",
+  "fields": {
+    "variante_articulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "archivo": "Articulo33bf5bae-b1c9-41ab-b999-32b784451b56/favicon-s.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "97ba8bab-d696-4a2a-a546-21ca4c818418",
+  "fields": {
+    "variante_articulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "archivo": "Articulo33bf5bae-b1c9-41ab-b999-32b784451b56/favicon-dress_EgQlwQe.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "98d40426-5169-455b-af2a-2933e98f2812",
+  "fields": {
+    "variante_articulo": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+    "archivo": "Articulo42c938aa-7778-4509-9ced-d9dcd5301eee/favicon-dress_HbXn4hD.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "9d00b217-0a73-4895-8e47-b5a6564c4629",
+  "fields": {
+    "variante_articulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "archivo": "Articulo33bf5bae-b1c9-41ab-b999-32b784451b56/favicon-s_DNgh1KK.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "a2b4766d-99f8-4b15-8dc2-8477b4eefe2f",
+  "fields": {
+    "variante_articulo": "42c938aa-7778-4509-9ced-d9dcd5301eee",
+    "archivo": "Articulo42c938aa-7778-4509-9ced-d9dcd5301eee/favicon-dress.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "a4ffe2da-3013-4b5b-b87b-a6bbcdbf675c",
+  "fields": {
+    "variante_articulo": "e3974861-a2cf-474e-a25a-674c58192a2d",
+    "archivo": "Articuloe3974861-a2cf-474e-a25a-674c58192a2d/yo.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "a7902b27-dd74-4065-94d2-110ad51807d7",
+  "fields": {
+    "variante_articulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "archivo": "Articulo33bf5bae-b1c9-41ab-b999-32b784451b56/favicon-dress.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "a8b3ff48-2f0a-44d5-93f9-ee824e6d81fa",
+  "fields": {
+    "variante_articulo": "918eba77-d0e0-44ae-966c-e4a31cc0a8d8",
+    "archivo": "Articulo918eba77-d0e0-44ae-966c-e4a31cc0a8d8/yo.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "ad3bbcea-26ff-497b-af00-574490aa2dd6",
+  "fields": {
+    "variante_articulo": "753edb52-4cde-4d45-8ad1-229c66acc82c",
+    "archivo": "Articulo753edb52-4cde-4d45-8ad1-229c66acc82c/real_GiqQlL7.jpeg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "aeba2cb2-2231-43ff-b53b-e1e5d3f7cc37",
+  "fields": {
+    "variante_articulo": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+    "archivo": "Articulo9833236d-d6ba-47be-b2df-44d2b8d56f97/favicon-s_HOjDOXS.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "b822a02f-3e60-4fec-bb5b-fbf96be0c201",
+  "fields": {
+    "variante_articulo": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+    "archivo": "Articulo9833236d-d6ba-47be-b2df-44d2b8d56f97/favicon-dress_0sb1VnE.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "df4fd906-5d58-475b-b103-ff1b78534657",
+  "fields": {
+    "variante_articulo": "9833236d-d6ba-47be-b2df-44d2b8d56f97",
+    "archivo": "Articulo9833236d-d6ba-47be-b2df-44d2b8d56f97/favicon-dress.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "e81c2f89-3470-44dc-a39f-ed9a8218d0bb",
+  "fields": {
+    "variante_articulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "archivo": "Articulo33bf5bae-b1c9-41ab-b999-32b784451b56/favicon-s_ZGnmcm1.png"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "ebd8f3c4-9c57-46b8-b680-7d6682443e7d",
+  "fields": {
+    "variante_articulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "archivo": "Articulo33bf5bae-b1c9-41ab-b999-32b784451b56/favicon-dress_hV7CwyT.jpg"
+  }
+},
+{
+  "model": "core.fotovariantearticulo",
+  "pk": "ef8e59ac-770c-4a5a-bb39-98fde9153509",
+  "fields": {
+    "variante_articulo": "b8f22930-3fda-4f28-a025-ea00940b0c41",
+    "archivo": "Articulob8f22930-3fda-4f28-a025-ea00940b0c41/yo.jpg"
+  }
+},
+{
+  "model": "core.articulodescuento",
+  "pk": "21dfd0f4-6c5f-4747-b518-db6d3698ef81",
+  "fields": {
+    "vararticulo": "0c1b8614-505c-4237-b144-52b81ada2d33",
+    "descuento": "54c2c40e-b629-4343-b31c-30fb08cc98b0",
+    "cantidad_inicial": "50",
+    "cantidad_restante": "50"
+  }
+},
+{
+  "model": "core.articulodescuento",
+  "pk": "29d060ef-0768-4fe7-a825-8ab1e0ef8c4d",
+  "fields": {
+    "vararticulo": "33bf5bae-b1c9-41ab-b999-32b784451b56",
+    "descuento": "001b3bb9-0148-4175-9bd9-b36c1bf2397d",
+    "cantidad_inicial": "5",
+    "cantidad_restante": "5"
+  }
+},
+{
+  "model": "core.articulodescuento",
+  "pk": "c609ca69-337a-41ce-95aa-4fce8cda248b",
+  "fields": {
+    "vararticulo": "88e3159b-2823-4519-848b-9d975dd9b110",
+    "descuento": "0e322011-043d-4854-8412-532d6736b1d8",
+    "cantidad_inicial": "50",
+    "cantidad_restante": "50"
+  }
+},
+{
+  "model": "core.articulodescuento",
+  "pk": "ee793674-5b78-414d-a049-43ea7adc865a",
+  "fields": {
+    "vararticulo": "090d6de2-9f5e-4131-90b8-c191f729f7dc",
+    "descuento": "1eb15417-2e75-49f7-9406-f0a241a3708c",
+    "cantidad_inicial": "120",
+    "cantidad_restante": "30"
+  }
+},
+{
+  "model": "core.articulodescuento",
+  "pk": "f715d0c8-88b9-4e88-92c8-1fbdf80964d2",
+  "fields": {
+    "vararticulo": "090d6de2-9f5e-4131-90b8-c191f729f7dc",
+    "descuento": "e83546f9-3fb8-4781-a8e4-4b4a408005c6",
+    "cantidad_inicial": "",
+    "cantidad_restante": "30"
+  }
+}
+]

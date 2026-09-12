@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
 from decimal import Decimal
 import os, json
 from django.db import transaction
 from django.utils import timezone
-import json
+from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
+
 from .models import *
 
 #### TABLAS CATALOGO 
@@ -98,27 +99,50 @@ class CategoriaWriteSerializer(serializers.ModelSerializer):
 class UsuarioListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = "__all__"
+        fields = ['idusuario', 'email', 'nombres', 'apellidos', 'documento',
+                    'numero', 'perfil', 'telefono', 'is_active','fecha_creacion']
 
 class UsuarioWriteSerializer(serializers.ModelSerializer):
     perfil = serializers.PrimaryKeyRelatedField(queryset=Perfil.objects.all(), required=False)
+    password = serializers.CharField(write_only=True, min_length=8, required=False)
 
     class Meta:
         model = Usuario
-        fields = ['idusuario', 'email', 'nombres', 'apellidos', 'documento', 'numero', 'perfil', 'telefono', 'activo','password_hash']
+        fields = ['idusuario', 'email', 'nombres', 'apellidos', 'documento', 'numero', 'perfil', 'telefono', 'is_active','password']
 
     def create(self, validate_data):
-        if 'password_hash' in validate_data:
-            validate_data['password_hash'] = make_password(validate_data['password_hash'])
-        return super().create(validate_data)
+        password = validate_data.pop('password', None)
+        validate_data.setdefault('perfil', get_perfil_cliente())
+        return Usuario.objects.create_user(password=password, **validate_data)
 
+    def update(self, instance, validate_data):
+        password = validate_data.pop('password', None)
+        for attr, value in validate_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class PasswordResetConfirmSerializers(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(write_only=True)
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
 
 class DireccionesListSerializer(serializers.ModelSerializer):
     usuario = UsuarioListSerializer(read_only=True)
 
     class Meta:
         model = Direcciones
-        fields = "__all__"
+        fields =  '__all__'
 
 class DireccionesWriteSerializer(serializers.ModelSerializer):
     usuario = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.all())
@@ -202,6 +226,14 @@ class VariantesArticulosListSerializer(serializers.ModelSerializer):
             return precio_con_descuento
         return precio_final
 
+
+class variantesItemsSerializers(serializers.Serializer):
+    talla = serializers.PrimaryKeyRelatedField(queryset=Tallas.objects.all())
+    color = serializers.PrimaryKeyRelatedField(queryset=Colores.objects.all())
+    sku = serializers.CharField(required=False, allow_blank=True, default="")
+    stock = serializers.IntegerField(min_value=0, default=0)
+    precio_extra = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0, default=0)
+
 class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
     articulo = ArticulosWriteSerializer()
     color = serializers.PrimaryKeyRelatedField(queryset=Colores.objects.all(), required=False, allow_null=True)
@@ -217,6 +249,29 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
         model = VariantesArticulos
         fields = ['idvararticulo', 'articulo', 'color', 'talla', 'sku', 'stock', 'precio_extra', 'foto','precio_final']
 
+    def _leer_variantes_raw(self):
+        request = self.context.get('request')
+        raw = request.data.get('variantes') if request else None
+        if isinstance(raw, str):
+            try:
+                return json.loads(raw)
+            except json.JSONDecodeError:
+                return []
+        return raw if isinstance(raw, list) else []
+
+
+    def _leer_fotos_validas(self):
+        EXTENCIONES = ('.jpg', '.jpeg', '.png')
+        request = self.context.get('request')
+        if not request:
+            return []
+        fotos = []
+        for i in range(4):
+            archivos = request.FILES.get(f'foto{i}')
+            if archivos and os.path.splitext(archivos.name)[1].lower() in EXTENCIONES:
+                fotos.append(archivos)
+        return fotos
+
     def to_internal_value(self, data):
         datos_mutables = {key: value for key, value in data.items()}
         if 'articulo' in data and isinstance(data['articulo'], str):
@@ -228,138 +283,68 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
     
     
     def create(self, validated_data):
-        EXTENSIONES = ['.jpg', '.png', '.jpeg']
-        datos_articulo = validated_data.pop('articulo')
+        datos_articulos = validated_data.pop('articulo')
 
-        request = self.context.get('request')
-        variante_raw = request.data.get('variantes') if request else None
+        items = variantesItemsSerializers(data=self._leer_variantes_raw(), many=True)
+        items.is_valid(raise_exception=True)
+        if not items.validated_data:
+            raise serializers.ValidationError({'variantes': 'Envia el menos una variante'})
 
-        if isinstance(variante_raw, str):
-            try:
-                variante_list = json.loads(variante_raw)
-            except json.JSONDecodeError:
-                variante_list = []
-        elif isinstance(variante_raw, list):
-            variante_list = variante_raw
-        else:
-            variante_list = []
-
+        fotos = self._leer_fotos_validas()
 
         with transaction.atomic():
-            slug_articulo = datos_articulo.get('slug')
-            if slug_articulo:
-                nuevos_articulos, _ = Articulos.objects.get_or_create(
-                    slug=slug_articulo,
-                    defaults=datos_articulo
+            articulo = Articulos.objects.create(**validated_data)
+            variantes = [
+                VariantesArticulos.objects.create(articulo=articulo, **item)
+                for item in items.validated_data
+            ]  
+
+        for variante in variantes:
+            for idx, archivo in enumerate(fotos):
+                archivo.seek(0)
+                if idx == 0 and not variante.foto:
+                    variante.foto = archivo
+                    archivo.save(update_fields=['foto'])
+                    archivo.seek(0)
+                FotoVarianteArticulo.objects.create(
+                    variante_articulo = variante,
+                    archivo = archivo
                 )
-            else:
-                nuevos_articulos = Articulos.objects.create(**datos_articulo)
-
-            primer_variante = None
-
-            for var_data in variante_list:
-                sku_val = str(var_data.get('sku', '')).strip()
-                color_id = var_data.get('color')
-                talla_id = var_data.get('talla')
-
-                try:
-                    stock_val = int(var_data.get('stock')) if var_data.get('stock') not in (None, '') else 0
-                except (ValueError, TypeError):
-                    stock_val = 0
-
-                try:
-                    precio_extra_val = Decimal(str(var_data.get('precio_extra'))).quantize(Decimal('0.01')) if var_data.get('precio_extra') not in (None, '') else Decimal('0.00')
-                except Exception:
-                    precio_extra_val = Decimal('0.00')
-
-                if sku_val:
-                    variante, _ = VariantesArticulos.objects.update_or_create(
-                        sku=sku_val,
-                        defaults={
-                            'articulo': nuevos_articulos,
-                            'color_id': color_id,
-                            'talla_id': talla_id,
-                            'stock': stock_val,
-                            'precio_extra': precio_extra_val,
-                        }
-                    )
-                else:
-                    variante = VariantesArticulos.objects.create(
-                        articulo=nuevos_articulos,
-                        color_id=color_id,
-                        talla_id=talla_id,
-                        sku='',
-                        stock=stock_val,
-                        precio_extra=precio_extra_val,
-                    )
-
-                if not primer_variante:
-                    primer_variante = variante
-
-                if request:
-                    for i in range(4):
-                        archivo = request.FILES.get(f'foto{i}')
-
-                        if not archivo: continue
-
-                        ext = os.path.splitext(archivo.name)[1].lower()
-
-                        if ext not in EXTENSIONES:
-                            continue
-                        
-                        if not variante.foto:
-                            variante.foto = archivo
-                            variante.save()
-
-                        foto = FotoVarianteArticulo(variante_articulo=variante)
-                        foto.archivo.save(archivo.name, archivo, save=True)
-
-            return primer_variante or nuevos_articulos
+        return variante[0]
         
     def update(self, instance, validated_data):
-        EXTENSIONES = ['.jpg', '.png', '.jpeg']
         datos_articulo = validated_data.pop('articulo', None)
+        fotos = self._leer_fotos_validas()
 
         with transaction.atomic():
-            #ACTUALIZAR LOS CAMPOS DE LA VARIANTE
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
             instance.save()
 
-            variante = instance
-            # SI SE ENVIARON DATOS LOS ACTUALIZAMOS
             if datos_articulo:
-                articulo_existente = instance.articulo #ACCEDEMOS AL ARTICULO
-                for attr, value in datos_articulo.items(): #RECORREMOS LOS DATOS NUEVOS
-                    setattr(articulo_existente, attr, value) # MODIFICAMS LOS CAMPOS
-                articulo_existente.save()
+                articulo = instance.articulo
+                for attr, value in datos_articulo.items():
+                    setattr(self.articulo, attr, value)
+                articulo.save()
 
-            request = self.context.get('request')
+            fotos_viejas = list(instance.fotovariantearticulo_set.all()) if fotos else []
 
-            errores = []
+        if fotos:
+            for f in fotos_viejas:
+                f.archivo.delete(save=False)
+                f.delete()
+            for idx, archivo in enumerate(fotos):
+                archivo.seek(0)
+                if idx == 0:
+                    instance.foto = archivo
+                    archivo.save(update_fields=['foto'])
+                    archivo.seek(0)
+                FotoVarianteArticulo.objects.create(
+                    variante_articulo = instance,
+                    archivo = archivo
+                )
+        return instance
 
-            # ACTUALIZA LAS FOTOS Y ELIMINA LAS ANTIGUAS
-            FotoVarianteArticulo.objects.filter(variante_articulo=variante).delete()
-
-            for i in range (4):
-                archivo = request.FILES.get(f'foto{i}')
-
-                if not archivo: continue
-
-                ext = os.path.splitext(archivo.name)[1].lower()
-
-                if ext not in EXTENSIONES:
-                    errores.append(f"Foto{i}: extension no permitida") 
-                    continue
-                
-                variante.foto = archivo
-                variante.save()
-
-                
-                nueva_foto = FotoVarianteArticulo(variante_articulo=variante)
-                nueva_foto.archivo.save(archivo.name, archivo, save=True)
-
-            return instance
 
 class ArticuloDescuentoSerializer(serializers.ModelSerializer):
     descuento = DescuentosSerializer(read_only=True)

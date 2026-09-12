@@ -18,9 +18,9 @@ class DireccionesViewSet(viewsets.ModelViewSet):
 
         if(buscar):
             queryset = queryset.filter(
-                Q(Usuario__nombres__icontains=buscar) |
-                Q(Usuario__numero__icontains=buscar) |
-                Q(Usuario__documento__sigla__icontains=buscar)
+                Q(usuario__nombres__icontains=buscar) |
+                Q(usuario__numero__icontains=buscar) |
+                Q(usuario__documento__sigla__icontains=buscar)
             )
 
         return queryset

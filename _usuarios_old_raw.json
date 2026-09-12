@@ -1,0 +1,47 @@
+{
+  "SH_Usuarios": [
+    {
+      "idusuario": "4ada3840824549a8b145a1c33bd6dd2f",
+      "email": "yanielfer2018@gmail.com",
+      "password_hash": "pbkdf2_sha256$1200000$UH9Xsnp1qi1mmZ5OxTwYwK$44jAMIcdf9FgfLTwPvCH21fE6y9vkF6wIxLFFI4ev/I=",
+      "nombres": "Yanielfer",
+      "apellidos": "Paya",
+      "numero": "1002981565",
+      "telefono": "3224390413",
+      "activo": "True",
+      "fecha_creacion": "2026-06-29 23:26:09.291892+00:00",
+      "documento_id": "30ff3ed81c114c858f6c9e8fe02bb920",
+      "perfil_id": "8d7a85e502874802ac21dfc1baa6816b"
+    }
+  ],
+  "SH_Direccion": [
+    {
+      "iddireccion": "49569e95bdda41cfb6f1a28007ede929",
+      "nombre_destinatario": "Yanielfer",
+      "direccion": "calle 5 # 1b-25",
+      "residencia": "Apartamento 201",
+      "barrio": "El cairo",
+      "ciudad": "Chia",
+      "departamento": "Cundinamarca",
+      "pais": "Colombia",
+      "codigo_postal": "250001",
+      "principal": "True",
+      "usuario_id": "4ada3840824549a8b145a1c33bd6dd2f"
+    },
+    {
+      "iddireccion": "fd98b319b82f4485b3773c7c9ac40716",
+      "nombre_destinatario": "Yanielfer",
+      "direccion": "Calle 13 # 4-78",
+      "residencia": "Casa",
+      "barrio": "Santa rita",
+      "ciudad": "Chia",
+      "departamento": "Cundinamarca",
+      "pais": "Colombia",
+      "codigo_postal": "250001",
+      "principal": "True",
+      "usuario_id": "4ada3840824549a8b145a1c33bd6dd2f"
+    }
+  ],
+  "SH_Carrito": [],
+  "SH_Orden": []
+}
