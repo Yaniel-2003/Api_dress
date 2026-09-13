@@ -110,6 +110,10 @@ class UsuarioWriteSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = ['idusuario', 'email', 'nombres', 'apellidos', 'documento', 'numero', 'perfil', 'telefono', 'is_active','password']
 
+    def validate_password(self, value):
+        validate_password(value)
+        return value 
+
     def create(self, validate_data):
         password = validate_data.pop('password', None)
         validate_data.setdefault('perfil', get_perfil_cliente())

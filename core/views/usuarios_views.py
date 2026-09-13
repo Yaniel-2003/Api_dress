@@ -41,7 +41,7 @@ class UsuariosViewSet(ModelViewSet):
             queryset = queryset.filter(documento__sigla__icontains=tipo_doc)
 
         if perfil:
-            queryset = queryset.filter(Perfil__nombre__icontains=perfil)
+            queryset = queryset.filter(perfil__nombre__icontains=perfil)
 
         return queryset
     

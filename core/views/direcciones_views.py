@@ -7,7 +7,7 @@ from ..serializers import DireccionesListSerializer, DireccionesWriteSerializer
 from ..models import Direcciones
 
 class DireccionesViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Direcciones.objects.select_related('usuario').order_by('-usuario')

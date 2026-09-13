@@ -16,6 +16,7 @@ router.register(r'descuento', DescuentoViewSet, basename='descuento')
 router.register(r'cupon', CuponesViewSet, basename='cupon')
 router.register(r'categoria', CategoriaViewSet, basename='categoria')
 router.register(r'prendas', PrendaViewSet, basename='prendas')
+router.register(r'regla-tallaje', CatReglasTallajeViewSet, basename='regla-tallaje')
 
 urlpatterns = [
     path('',include(router.urls)),
