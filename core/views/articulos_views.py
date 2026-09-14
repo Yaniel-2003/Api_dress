@@ -166,8 +166,8 @@ def Fotos_articulos(request, idvararticulo):
         fotos = fotos_articulos.fotovariantearticulo_set.all()
 
         data = [{
-            'id': foto.idfoto,
-            'url': request.build_absolute_url(foto.archivo.url),
+            'idfoto': foto.idfoto,
+            'urlfoto': request.build_absolute_uri(foto.archivo.url),
         } for foto in fotos
         ]
         return Response(data, status=status.HTTP_200_OK)

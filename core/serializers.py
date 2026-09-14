@@ -297,7 +297,7 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
         fotos = self._leer_fotos_validas()
 
         with transaction.atomic():
-            articulo = Articulos.objects.create(**validated_data)
+            articulo = Articulos.objects.create(**datos_articulos)
             variantes = [
                 VariantesArticulos.objects.create(articulo=articulo, **item)
                 for item in items.validated_data
@@ -308,13 +308,13 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
                 archivo.seek(0)
                 if idx == 0 and not variante.foto:
                     variante.foto = archivo
-                    archivo.save(update_fields=['foto'])
+                    variante.save(update_fields=['foto'])
                     archivo.seek(0)
                 FotoVarianteArticulo.objects.create(
                     variante_articulo = variante,
                     archivo = archivo
                 )
-        return variante[0]
+        return variantes[0]
         
     def update(self, instance, validated_data):
         datos_articulo = validated_data.pop('articulo', None)
@@ -328,7 +328,7 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
             if datos_articulo:
                 articulo = instance.articulo
                 for attr, value in datos_articulo.items():
-                    setattr(self.articulo, attr, value)
+                    setattr(articulo, attr, value)
                 articulo.save()
 
             fotos_viejas = list(instance.fotovariantearticulo_set.all()) if fotos else []
@@ -341,7 +341,7 @@ class VariantesArticulosWriteSerializer(serializers.ModelSerializer):
                 archivo.seek(0)
                 if idx == 0:
                     instance.foto = archivo
-                    archivo.save(update_fields=['foto'])
+                    instance.save(update_fields=['foto'])
                     archivo.seek(0)
                 FotoVarianteArticulo.objects.create(
                     variante_articulo = instance,
