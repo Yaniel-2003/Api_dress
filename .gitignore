@@ -9,3 +9,7 @@ __pycache__
 
 media/
 staticfiles/
+
+_usuarios_old_raw.json
+backup_core_utf8.json
+_migraciones_backup/
