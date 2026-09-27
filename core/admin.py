@@ -16,6 +16,11 @@ admin.site.register(Categoria)
 admin.site.register(Prendas)
 admin.site.register(Permission)
 admin.site.register(Cat_Reglas_Tallaje)
+admin.site.register(Carrito)
+admin.site.register(ItemsCarrito)
+admin.site.register(VariantesArticulos)
+admin.site.register(Articulos)
+
 
 
 @admin.register(Usuario)
