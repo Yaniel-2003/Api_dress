@@ -17,6 +17,7 @@ from datetime import timedelta
 
 
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,17 +89,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': os.environ.get('DB_ENGINE', 'mssql'),
-        'NAME': os.environ.get('DB_NAME', 'shopy_dress'),
-        'USER': os.environ.get('DB_USER', 'sa'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'Ya1002981565'),
-        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('DB_PORT', '1433'),
-        
-        # Opciones específicas para conectarse a SQL Server 2022
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',  # Asegúrate de tener este driver en tu PC
+    "default": {
+        "ENGINE": "mssql",
+        "NAME": os.getenv("DB_NAME", "shopy_dress"),
+        "USER": os.environ["DB_USER"],
+        "PASSWORD": os.environ["DB_PASSWORD"],
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+        "PORT": os.getenv("DB_PORT", "1433"),
+        "OPTIONS": {
+            "driver": "ODBC Driver 18 for SQL Server",
+            "extra_params": "TrustServerCertificate=yes",
         },
     }
 }
