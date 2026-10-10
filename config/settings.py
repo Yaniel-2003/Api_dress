@@ -165,7 +165,7 @@ REST_FRAMEWORK = {
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = r'C:\Users\PC\Documents\ProyectoPython\dress-shopy\Fotos_articulos'
+MEDIA_ROOT = BASE_DIR.parent / 'Fotos_articulos'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
