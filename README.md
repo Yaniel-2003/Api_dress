@@ -1,8 +1,8 @@
 # Dress Shopy — API
 
-Backend de **Dress Shopy**, una tienda de ropa online. Construido con **Django 6** y **Django REST Framework**, expone una API REST protegida con **JWT** para gestionar catálogo de productos, variantes (talla/color), usuarios, direcciones, descuentos y cupones sobre una base de datos **SQL Server**.
+Backend de **Dress Shopy**, una tienda de ropa online. Construido con **Django 6** y **Django REST Framework**, expone una API REST protegida con **JWT** para gestionar catálogo de productos, variantes (talla/color), usuarios, direcciones, descuentos, cupones y carrito de compras sobre una base de datos **SQL Server**.
 
-> Este backend está pensado para consumirse desde el front-end en React/Vite del mismo proyecto (`../front-end`).
+> Este backend se consume desde el front-end en React/Vite del repositorio hermano [`Frontend-Dress`](https://github.com/Yaniel-2003/Frontend-Dress).
 
 ---
 
@@ -12,7 +12,7 @@ Backend de **Dress Shopy**, una tienda de ropa online. Construido con **Django 6
 - [Estructura del proyecto](#estructura-del-proyecto)
 - [Modelo de datos](#modelo-de-datos)
 - [Requisitos previos](#requisitos-previos)
-- [Instalación y puesta en marcha](#instalación-y-puesta-en-marcha)
+- [Instalación y puesta en marcha (Ubuntu)](#instalación-y-puesta-en-marcha-ubuntu)
 - [Variables de entorno](#variables-de-entorno)
 - [Autenticación (JWT)](#autenticación-jwt)
 - [Endpoints de la API](#endpoints-de-la-api)
@@ -32,6 +32,7 @@ Backend de **Dress Shopy**, una tienda de ropa online. Construido con **Django 6
 | Base de datos | SQL Server (vía `mssql-django` + `pyodbc`) |
 | CORS | `django-cors-headers` |
 | Panel admin | `django-jazzmin` (tema visual para el admin de Django) |
+| Imágenes | `pillow` |
 | Configuración | `python-dotenv` (variables en `.env`) |
 
 Dependencias completas en [`requirements.txt`](./requirements.txt).
@@ -39,37 +40,40 @@ Dependencias completas en [`requirements.txt`](./requirements.txt).
 ## Estructura del proyecto
 
 ```
-api/
+Api_dress/
 ├── manage.py
 ├── requirements.txt
+├── update_rules.py             # script puntual para reasignar reglas de tallaje a prendas/tallas
 ├── .env                        # variables de entorno (NO se sube a git)
 ├── config/                     # configuración del proyecto Django
 │   ├── settings.py
 │   ├── urls.py                 # monta /admin/ y /api/
-│   ├── asgi.py / wsgi.py
-├── core/                       # única app Django del proyecto
-│   ├── models.py                # todo el modelo de datos (ver más abajo)
-│   ├── serializers.py
-│   ├── admin.py                  # registro de modelos en el admin (Jazzmin)
-│   ├── paginacion.py             # paginación global de la API
-│   ├── migrations/
-│   ├── urls/                     # urls separadas por dominio
-│   │   ├── __init__.py           # agrupa todos los sub-urls bajo /api/
-│   │   ├── auth_urls.py          # /api/login/, /api/logout/
-│   │   ├── usuarios_urls.py      # /api/usuario/
-│   │   ├── direcciones_urls.py   # /api/direcciones/
-│   │   ├── catalogo_urls.py      # marca, color, talla, categoría, cupón, etc.
-│   │   └── articulo_urls.py      # /api/articulos/, variantes, fotos, descuentos
-│   └── views/                    # vistas separadas por dominio (mismo criterio que urls/)
-│       ├── auth_views.py
-│       ├── usuarios_views.py
-│       ├── direcciones_views.py
-│       ├── catalogo.py
-│       └── articulos_views.py
-└── _migraciones_backup/        # histórico de migraciones anteriores (no se usa en runtime)
+│   └── asgi.py / wsgi.py
+└── core/                       # única app Django del proyecto
+    ├── models.py               # todo el modelo de datos (ver más abajo)
+    ├── serializers.py
+    ├── admin.py                # registro de modelos en el admin (Jazzmin)
+    ├── paginacion.py           # paginación global de la API
+    ├── send_email.py           # correo de recuperación de contraseña
+    ├── migrations/
+    ├── urls/                   # urls separadas por dominio
+    │   ├── __init__.py         # agrupa todos los sub-urls bajo /api/
+    │   ├── auth_urls.py        # login, logout, token, recuperación de contraseña
+    │   ├── usuarios_urls.py    # /api/usuario/
+    │   ├── direcciones_urls.py # /api/direcciones/
+    │   ├── catalogo_urls.py    # marca, color, talla, categoría, cupón, etc.
+    │   ├── articulo_urls.py    # /api/articulos/, variantes, fotos, descuentos
+    │   └── carrito_urls.py     # /api/carritos-compras/, agregar_item_carrito
+    └── views/                  # vistas separadas por dominio (mismo criterio que urls/)
+        ├── auth_views.py
+        ├── usuarios_views.py
+        ├── direcciones_views.py
+        ├── catalogo.py
+        ├── articulos_views.py
+        └── carrito_views.py
 ```
 
-> Nota: `_migraciones_backup/`, `backup_core_utf8.json` y `_usuarios_old_raw.json` parecen respaldos de una migración/reset de base de datos anterior. No forman parte del flujo normal de la app.
+> `_migraciones_backup/`, `backup_core_utf8.json` y `_usuarios_old_raw.json` son respaldos locales de un reset anterior de la base de datos. Están en el `.gitignore`, no se suben al repositorio y no forman parte del flujo normal de la app.
 
 ## Modelo de datos
 
@@ -78,7 +82,7 @@ Todas las tablas viven en la app `core` (`core/models.py`) y usan **UUID como ll
 - **Catálogo base**: `Genero`, `NunDocumento`, `Perfil`, `Marcas`, `Colores`, `Cat_Reglas_Tallaje`, `Prendas`, `Tallas`, `Impuestos`, `Descuentos`, `Cupones`, `Categoria`.
 - **Usuarios y direcciones**: `Usuario` (modelo de usuario personalizado, login por `email`), `Direcciones`.
 - **Productos**: `Articulos` (producto base), `VariantesArticulos` (SKU por talla/color, con stock y foto), `FotoVarianteArticulo` (fotos adicionales), `ArticuloDescuento` (descuentos aplicados a una variante).
-- **Carrito**: `Carrito`, `ItemsCarrito`.
+- **Carrito**: `Carrito` (uno por usuario), `ItemsCarrito` (variante + cantidad).
 - **Órdenes y pagos**: `Orden`, `ItemsOrden`, `Pagos`, `Entregas`, `Facturas`.
 - **Soporte operativo**: `Devoluciones`, `MovimientosInventario`, `Notificaciones`.
 
@@ -91,70 +95,83 @@ Detalles relevantes:
 
 ## Requisitos previos
 
-- **Python 3.11+** (probado con 3.14).
-- **SQL Server** accesible (local o remoto) con la base de datos creada.
-- **ODBC Driver 17 for SQL Server** instalado en el sistema (requerido por `pyodbc`/`mssql-django`).
-- `pip` para instalar dependencias.
+- **Ubuntu** (probado en Ubuntu sobre WSL2) con `python3`, `python3-venv`, `python3-dev`, `build-essential` y `git`.
+- **Python 3.11+**.
+- **SQL Server** accesible (local, en Docker o remoto) con la base de datos creada.
+- **Microsoft ODBC Driver 18 for SQL Server** (`msodbcsql18`) y `unixodbc-dev`. `settings.py` usa este driver; el 17 ya no es el configurado.
 
-## Instalación y puesta en marcha
+## Instalación y puesta en marcha (Ubuntu)
+
+### 1. Dependencias del sistema
 
 ```bash
-# 1. Entrar a la carpeta del backend
-cd api
+sudo apt update
+sudo apt install -y python3 python3-venv python3-dev build-essential unixodbc-dev curl gnupg
+```
 
-# 2. Crear y activar entorno virtual
-python -m venv venvDS
-venvDS\Scripts\activate        # Windows
-# source venvDS/bin/activate   # Linux/Mac
+### 2. Driver ODBC 18 de SQL Server
 
-# 3. Instalar dependencias
+```bash
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+sudo apt update
+sudo ACCEPT_EULA=Y apt install -y msodbcsql18
+odbcinst -q -d    # debe listar [ODBC Driver 18 for SQL Server]
+```
+
+### 3. Entorno virtual y dependencias de Python
+
+```bash
+git clone git@github.com:Yaniel-2003/Api_dress.git
+cd Api_dress
+
+python3 -m venv .venv
+source .venv/bin/activate
+
 pip install -r requirements.txt
+```
 
-# 4. Crear el archivo .env (ver sección de variables de entorno)
-copy .env.example .env         # si no existe, créalo manualmente con los valores de abajo
+### 4. Variables de entorno
 
-# 5. Aplicar migraciones sobre la base de datos configurada
+Crea un archivo `.env` en la raíz con los valores de la sección siguiente. **`DB_USER` y `DB_PASSWORD` son obligatorios**: si faltan, Django no arranca (`KeyError`).
+
+### 5. Migraciones, superusuario y servidor
+
+```bash
 python manage.py migrate
-
-# 6. Crear un superusuario para entrar al panel de administración
 python manage.py createsuperuser
-
-# 7. Levantar el servidor de desarrollo
 python manage.py runserver
 ```
 
 Por defecto el servidor queda disponible en `http://127.0.0.1:8000/`, y la API bajo `http://127.0.0.1:8000/api/`.
 
+> **Si SQL Server corre en Windows y usas WSL2**, `127.0.0.1` apunta a Ubuntu, no a Windows. Pon en `DB_HOST` la IP del host de Windows (en WSL2 suele ser la de `ip route show | grep default`) y habilita TCP/IP en el puerto 1433.
+
 ## Variables de entorno
 
-El archivo `.env` se carga desde `config/settings.py` con `python-dotenv`. Variables usadas:
+El archivo `.env` se carga desde `config/settings.py` con `python-dotenv`. Variables que **realmente se leen**:
 
-| Variable | Descripción | Valor por defecto en el código |
+| Variable | Descripción | Por defecto |
 |---|---|---|
-| `DEBUG` | Modo debug de Django | `True` (hardcodeado en `settings.py`, el valor del `.env` no se lee actualmente) |
-| `SECRET_KEY` | Clave secreta de Django | *(no se lee del `.env` todavía, ver [Notas](#notas-y-puntos-a-mejorar))* |
-| `DB_ENGINE` | Motor de base de datos | `mssql` |
 | `DB_NAME` | Nombre de la base de datos | `shopy_dress` |
-| `DB_USER` | Usuario de SQL Server | `sa` |
-| `DB_PASSWORD` | Contraseña de SQL Server | — |
+| `DB_USER` | Usuario de SQL Server | **obligatoria** |
+| `DB_PASSWORD` | Contraseña de SQL Server | **obligatoria** |
 | `DB_HOST` | Host de SQL Server | `127.0.0.1` |
 | `DB_PORT` | Puerto de SQL Server | `1433` |
 
 Ejemplo de `.env`:
 
 ```env
-DEBUG=True
-SECRET_KEY=cambia-esta-clave-por-una-segura
-
-DB_ENGINE=mssql
 DB_NAME=shopy_dress
 DB_USER=sa
 DB_PASSWORD=tu-password
-DB_HOST=localhost
+DB_HOST=127.0.0.1
 DB_PORT=1433
 ```
 
-`CORS_ALLOWED_ORIGINS` está fijado en `settings.py` a `http://localhost:5173` y `http://127.0.0.1:5173` (el puerto por defecto de Vite). Si el front corre en otro host/puerto, hay que actualizarlo ahí.
+El motor (`mssql`), el driver (`ODBC Driver 18 for SQL Server`) y la opción `TrustServerCertificate=yes` están fijos en `settings.py`. Si tu `.env` trae `DEBUG`, `SECRET_KEY`, `DB_ENGINE` o `DB_DRIVER`, **hoy no se leen** (ver [Notas](#notas-y-puntos-a-mejorar)).
+
+`CORS_ALLOWED_ORIGINS` está fijado en `settings.py` a `http://localhost:5173` y `http://127.0.0.1:5173` (el puerto por defecto de Vite). Si el front corre en otro host/puerto, hay que actualizarlo ahí. `FRONTEND_URL` (usado en el correo de recuperación) también está fijo en `http://localhost:5173`.
 
 ## Autenticación (JWT)
 
@@ -162,11 +179,13 @@ La API usa `rest_framework_simplejwt` como único backend de autenticación (`DE
 
 - **Login**: `POST /api/login/` con `{ "email": "...", "password": "..." }` → responde `access`, `refresh` y los datos del `usuario`.
 - **Uso del token**: enviar `Authorization: Bearer <access>` en cada request a un endpoint protegido.
+- **Refresco**: `POST /api/token/refresh/` con el `refresh` token.
 - **Logout**: `POST /api/logout/` (requiere estar autenticado) con `{ "refresh": "..." }`.
+- **Recuperar contraseña**: `POST /api/password-reset/` (público, con throttling) envía un enlace por correo; `POST /api/password-reset/confirm/` fija la nueva contraseña. En desarrollo el correo se imprime en la consola del servidor (`EMAIL_BACKEND` de consola).
 - **Duración**: access token 1 día, refresh token 7 días (`SIMPLE_JWT` en `settings.py`).
-- El claim de usuario usa `idusuario` (UUID) en vez del `id` numérico por defecto de Django (`USER_ID_FIELD` / `USER_ID_CLAIM`).
+- El claim de usuario usa `idusuario` (UUID) en vez del `id` numérico por defecto de Django (`USER_ID_FIELD`).
 
-> El registro de usuarios se hace por el endpoint estándar `POST /api/usuario/` (ver tabla de endpoints), que es público.
+> El registro de usuarios se hace por `POST /api/usuario/`, que es público.
 
 ## Endpoints de la API
 
@@ -177,13 +196,17 @@ Todos los endpoints cuelgan del prefijo `/api/`.
 | Método | Ruta | Permiso | Descripción |
 |---|---|---|---|
 | POST | `/api/login/` | Público | Inicia sesión y devuelve tokens JWT |
-| POST | `/api/logout/` | Autenticado | Invalida (recibe) el refresh token |
+| POST | `/api/token/` | Público | Par de tokens estándar de SimpleJWT |
+| POST | `/api/token/refresh/` | Público | Renueva el access token |
+| POST | `/api/logout/` | Autenticado | Invalida el refresh token |
+| POST | `/api/password-reset/` | Público | Envía el correo de recuperación |
+| POST | `/api/password-reset/confirm/` | Público | Confirma la nueva contraseña |
 
 ### Usuarios
 
 | Método | Ruta | Permiso | Descripción |
 |---|---|---|---|
-| GET | `/api/usuario/` | Autenticado | Lista usuarios (filtro `?buscar=`, `?documento=`, `?nombre=`) |
+| GET | `/api/usuario/` | Autenticado | Lista usuarios (filtros `?buscar=`, `?documento=`, `?nombre=`) |
 | POST | `/api/usuario/` | Público | Registro de nuevo usuario |
 | GET/PUT/PATCH/DELETE | `/api/usuario/{id}/` | Autenticado | Detalle / actualización / borrado |
 
@@ -191,8 +214,8 @@ Todos los endpoints cuelgan del prefijo `/api/`.
 
 | Método | Ruta | Permiso | Descripción |
 |---|---|---|---|
-| GET/POST | `/api/direcciones/` | Público (`AllowAny`) | Listar / crear direcciones (filtro `?buscar=`) |
-| GET/PUT/PATCH/DELETE | `/api/direcciones/{id}/` | Público (`AllowAny`) | Detalle / actualización / borrado |
+| GET/POST | `/api/direcciones/` | Autenticado | Listar / crear direcciones (filtro `?buscar=`) |
+| GET/PUT/PATCH/DELETE | `/api/direcciones/{id}/` | Autenticado | Detalle / actualización / borrado |
 
 ### Catálogo (CRUD estándar vía router)
 
@@ -218,16 +241,29 @@ Todos los endpoints cuelgan del prefijo `/api/`.
 | GET/PUT/PATCH/DELETE | `/api/articulos/{id}/` | Autenticado | Detalle / actualización / borrado |
 | GET/POST | `/api/variantes-articulos/` | Autenticado | Listar/crear variantes (filtros `?buscar=`, `?color=`, `?talla=`, `?marca=`, `?categoria=`, `?prendas=`, `?estado=`, admite listas separadas por coma) |
 | GET/PUT/PATCH/DELETE | `/api/variantes-articulos/{id}/` | Autenticado | Detalle / actualización / borrado |
-| GET | `/api/variantes-articulos/tienda_publica/` | **Público** | Vitrina pública: solo variantes con `stock > 0` y artículo activo, con descuentos precargados |
+| GET | `/api/tienda-publica/` | **Público** | Vitrina pública: solo variantes con `stock > 0` y artículo activo, con descuentos precargados |
 | GET | `/api/variantes/{idvararticulo}/fotos/` | Autenticado | Lista las fotos de una variante |
 | GET/POST | `/api/descuento-articulos/` | Autenticado | Listar/crear descuentos aplicados a variantes |
 | GET/PUT/PATCH/DELETE | `/api/descuento-articulos/{id}/` | Autenticado | Detalle / actualización / borrado |
+
+### Carrito de compras
+
+El carrito pertenece al usuario autenticado: cada consulta se filtra por `request.user`.
+
+| Método | Ruta | Permiso | Descripción |
+|---|---|---|---|
+| GET | `/api/carritos-compras/` | Autenticado | Lista los ítems del carrito del usuario |
+| PATCH | `/api/carritos-compras/{iditmcarrito}/` | Autenticado | Actualiza un ítem (p. ej. la `cantidad`) |
+| DELETE | `/api/carritos-compras/{iditmcarrito}/` | Autenticado | Quita un ítem del carrito |
+| POST | `/api/agregar_item_carrito/{idvararticulo}/` | Autenticado | Agrega una variante al carrito; si ya estaba, suma 1 a la cantidad. Crea el carrito si no existe |
 
 Todos los listados (excepto los que declaran su propia paginación) usan `PaginacionGlobal`: 50 resultados por página, máximo 100.
 
 ## Archivos de media
 
-Las fotos de las variantes de producto (`VariantesArticulos.foto`, `FotoVarianteArticulo.archivo`) se guardan en disco bajo `Fotos_articulos/Articulo<uuid>/...`, fuera de la carpeta `api/` (en la raíz del repositorio). Se sirven en desarrollo (`DEBUG=True`) desde `MEDIA_URL = /media/`.
+Las fotos de las variantes de producto (`VariantesArticulos.foto`, `FotoVarianteArticulo.archivo`) se guardan en disco bajo `MEDIA_ROOT` y se sirven en desarrollo (`DEBUG=True`) desde `MEDIA_URL = /media/`.
+
+> **Pendiente para Ubuntu:** `MEDIA_ROOT` sigue apuntando a una ruta de Windows (`C:\Users\PC\...\Fotos_articulos`). En Linux esa ruta no existe, así que Django crearía una carpeta con ese nombre literal dentro del proyecto. Antes de subir o servir fotos, cámbialo por una ruta relativa, por ejemplo `MEDIA_ROOT = BASE_DIR / 'Fotos_articulos'`.
 
 ## Panel de administración
 
@@ -237,9 +273,11 @@ Disponible en `/admin/` con el tema **Jazzmin**. Ahí se gestionan directamente 
 
 Cosas detectadas al revisar el código que vale la pena tener en cuenta antes de llevar esto a producción:
 
-- **Secretos hardcodeados**: `settings.py` trae un `SECRET_KEY` de ejemplo y una contraseña de base de datos por defecto escritos directamente en el código (como *fallback* de `os.environ.get(...)`). Aunque el `.env` real está en `.gitignore`, estos valores por defecto sí quedan en el historial del repo. Se recomienda no dejar contraseñas reales como fallback y rotar esa `SECRET_KEY`/contraseña si ya se compartió el repo.
-- **`MEDIA_ROOT` con ruta absoluta de Windows**: apunta a `C:\Users\PC\...`, lo que hace el proyecto no portable a otras máquinas/SO. Conviene definirlo relativo a `BASE_DIR`.
-- **`/api/direcciones/` es público** (`AllowAny`), a diferencia del resto de recursos que exigen JWT. Revisar si es intencional o debería requerir autenticación.
-- **Subida de fotos deshabilitada**: el método `POST` de `Fotos_articulos` (subir fotos de una variante) está comentado en `core/views/articulos_views.py`; hoy el endpoint solo permite `GET`.
+- **`SECRET_KEY` y `DEBUG` hardcodeados**: `settings.py` trae un `SECRET_KEY` de ejemplo (`django-insecure-...`) y `DEBUG = True` escritos en el código; los valores del `.env` no se leen. Para producción hay que leerlos de variables de entorno y poner `ALLOWED_HOSTS`.
+- **Contraseña antigua en el historial de git**: hasta el commit `c3de03e` `settings.py` traía una contraseña de base de datos como *fallback*. Ya se quitó (ahora `DB_USER`/`DB_PASSWORD` son obligatorias), pero sigue en el historial del repositorio: conviene **cambiar esa contraseña** en SQL Server.
+- **`MEDIA_ROOT` con ruta absoluta de Windows**: ver [Archivos de media](#archivos-de-media).
+- **Typo en JWT**: `SIMPLE_JWT` define `ROTATE_REFRECH_TOKEN`, pero la opción real de SimpleJWT es `ROTATE_REFRESH_TOKENS`; tal como está, la rotación de refresh tokens no se activa.
 - **Typo en paginación**: `PaginacionGlobal.pague_size_query_param` (en `core/paginacion.py`) debería llamarse `page_size_query_param`; tal como está, DRF no lo reconoce y el tamaño de página no se puede sobreescribir por query param.
-- `DEBUG` y `SECRET_KEY` están definidos en `.env` pero **no se leen** desde `settings.py` (siguen hardcodeados); si se quiere que el `.env` controle esto, hay que cablearlo en `settings.py`.
+- **Subida de fotos deshabilitada**: el método `POST` de `Fotos_articulos` (subir fotos de una variante) está comentado en `core/views/articulos_views.py`; hoy el endpoint solo permite `GET`.
+- **Enlace de recuperación sin pantalla en el front**: el correo apunta a `{FRONTEND_URL}/reset-password?uid=...&token=...`, pero el front todavía no tiene esa ruta.
+- **Carrito sin validaciones**: `agregar_item_carrito` no comprueba el `stock` de la variante ni responde 404 limpio si el `idvararticulo` no existe.
