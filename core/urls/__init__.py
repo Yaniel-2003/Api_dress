@@ -8,4 +8,5 @@ urlpatterns = [
     path('', include('core.urls.direcciones_urls')),
     path('', include('core.urls.articulo_urls')),
     path('', include('core.urls.carrito_urls')),
+    path('', include('core.urls.orden_urls')),
 ]

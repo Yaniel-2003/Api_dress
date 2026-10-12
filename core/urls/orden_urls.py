@@ -1,0 +1,11 @@
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from ..views import OrdenViewSet
+
+router = DefaultRouter()
+
+router.register(r'orden-compra', OrdenViewSet, basename='orden-compra')
+
+urlpatterns = [
+    path('', include(router.urls)),
+]

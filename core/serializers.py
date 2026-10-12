@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from decimal import Decimal
 import os, json
+import uuid
 from django.db import transaction
 from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
@@ -495,13 +496,120 @@ class OrdenListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class OrdenWriteSerializer(serializers.ModelSerializer):
-    usuario = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.all())
     direccion = serializers.PrimaryKeyRelatedField(queryset=Direcciones.objects.all())
     cupon = serializers.PrimaryKeyRelatedField(queryset=Cupones.objects.all(), required=False, allow_null=True)
     
     class Meta:
         model = Orden
-        fields = ['usuario', 'direccion', 'cupon', 'numero_orden', 'estado', 'subtotal', 'total_descuentos', 'total_impuestos', 'total']
+        fields = ['direccion', 'cupon', 'numero_orden', 'estado','subtotal', 'total_descuentos', 'total_impuestos', 'total']
+        read_only_fields = ['numero_orden', 'estado', 'subtotal','total_descuentos', 'total_impuestos', 'total']
+
+    def validate_direccion(self, value):
+        if value.usuario != self.context['request'].user:
+            raise serializers.ValidationError("Esta direccion no te pertenece.")
+        return value
+
+
+    def create(self, validated_data):
+        usuario = self.context['request'].user
+        centavos = Decimal('0.01')
+
+
+        items = list(ItemsCarrito.objects.filter(carrito__usuario=usuario))
+        if not items:
+            raise serializers.ValidationError("El carrito esta vacio.")
+        
+
+        with transaction.atomic():
+            variantes = {
+                v.pk: v for v in VariantesArticulos.objects
+                .select_for_update()
+                .select_related('articulo__impuestos')
+                .filter(pk__in=[i.vararticulo_id for i in items])
+            }
+
+            subtotal = Decimal('0')
+            total_descuento = Decimal('0') 
+            total_impuesto = Decimal('0')
+            datos_items = []
+
+            for item in items:
+                variante = variantes[item.vararticulo_id]
+
+                if item.cantidad > variante.stock:
+                    raise serializers.ValidationError(
+                        f"Stock insuficiente para {variante.sku}. Disponible: {variante.stock}"
+                    )
+
+                precio_unitario = variante.precio_final.quantize(centavos)
+
+                variante_desc = (variante.articulodescuento_set
+                                .filter(descuento__estado=True)
+                                .select_related('descuento')
+                                .first())
+
+                descuento_unitario = Decimal('0')
+                descuento_obj = None
+
+                if variante_desc:   
+                    descuento_unitario = (precio_unitario - variante_desc.precio_calculado).quantize(centavos)
+
+                    if descuento_unitario > 0:
+                        descuento_obj = variante_desc.descuento
+
+
+                porcentaje = variante.articulo.impuestos.porcentaje
+                precio_neto = precio_unitario - descuento_unitario
+
+                impuesto_unitario = (precio_neto * porcentaje / (100 + porcentaje)).quantize(centavos)
+
+                subtotal += precio_unitario * item.cantidad
+                total_descuento += descuento_unitario * item.cantidad
+                total_impuesto += impuesto_unitario * item.cantidad
+
+                datos_items.append({
+                    'vararticulo': variante,
+                    'descuento': descuento_obj,
+                    'cantidad': item.cantidad,
+                    'precio_unitario': precio_unitario,
+                    'descuento_aplicado': descuento_unitario * item.cantidad,
+                })
+
+            total = subtotal - total_descuento
+
+            orden = Orden.objects.create(
+                usuario=usuario,
+                numero_orden=f"ORD-{timezone.now():%Y%m%d}-{uuid.uuid4().hex[:6].upper()}",
+                subtotal=subtotal,
+                total_descuentos=total_descuento,
+                total_impuestos=total_impuesto,
+                total=total,
+                **validated_data,
+            )
+
+            ItemsOrden.objects.bulk_create([
+                ItemsOrden(orden=orden, **datos) for datos in datos_items
+            ])
+
+            for item in items:
+                variante = variantes[item.vararticulo_id]
+                stock_anterior = variante.stock
+                variante.stock -= item.cantidad
+                variante.save(update_fields=['stock'])
+
+                MovimientosInventario.objects.create(
+                    variante=variante,
+                    usuario=usuario,
+                    tipo='salida',
+                    cantidad=item.cantidad,
+                    stock_anterior=stock_anterior,
+                    stock_resultante=variante.stock,
+                    motivo=f"Venta - {orden.numero_orden}",
+                )
+
+            ItemsCarrito.objects.filter(carrito__usuario=usuario).delete()
+
+        return orden
 
 # --- PAGO, ENTREGA Y FACTURACIÓN ---
 
