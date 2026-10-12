@@ -498,10 +498,11 @@ class OrdenListSerializer(serializers.ModelSerializer):
 class OrdenWriteSerializer(serializers.ModelSerializer):
     direccion = serializers.PrimaryKeyRelatedField(queryset=Direcciones.objects.all())
     cupon = serializers.PrimaryKeyRelatedField(queryset=Cupones.objects.all(), required=False, allow_null=True)
+    items_carrito = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False, allow_empty=False)
     
     class Meta:
         model = Orden
-        fields = ['direccion', 'cupon', 'numero_orden', 'estado','subtotal', 'total_descuentos', 'total_impuestos', 'total']
+        fields = ['direccion', 'cupon', 'numero_orden', 'estado','subtotal', 'total_descuentos', 'total_impuestos', 'total', 'items_carrito']
         read_only_fields = ['numero_orden', 'estado', 'subtotal','total_descuentos', 'total_impuestos', 'total']
 
     def validate_direccion(self, value):
@@ -514,8 +515,16 @@ class OrdenWriteSerializer(serializers.ModelSerializer):
         usuario = self.context['request'].user
         centavos = Decimal('0.01')
 
+        ids = validated_data.pop('items_carrito', None)
 
-        items = list(ItemsCarrito.objects.filter(carrito__usuario=usuario))
+        consulta = ItemsCarrito.objects.filter(carrito__usuario=usuario)
+        if ids is not None:
+            consulta = consulta.filter(pk__in=ids)
+        
+        items = list(consulta)
+        if ids is not None and len(items) != len(set(ids)):
+            raise serializers.ValidationError("Algún item seleccionado no está en tu carrito.") 
+
         if not items:
             raise serializers.ValidationError("El carrito esta vacio.")
         
@@ -607,7 +616,7 @@ class OrdenWriteSerializer(serializers.ModelSerializer):
                     motivo=f"Venta - {orden.numero_orden}",
                 )
 
-            ItemsCarrito.objects.filter(carrito__usuario=usuario).delete()
+            ItemsCarrito.objects.filter(pk__in=[i.pk for i in items]).delete()
 
         return orden
 

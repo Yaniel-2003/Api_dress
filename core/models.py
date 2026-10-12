@@ -368,12 +368,18 @@ class ArticuloDescuento(models.Model):
         descuento_valor = self.descuento.valor
         descuento_tipo = self.descuento.tipo
         cantidad_restante = self.cantidad_restante
+        estado = self.descuento.estado
+
+        if estado is False:
+            return precio_final
 
         ahora = timezone.now().date()
         fecha1 = self.descuento.valido_desde.date() 
         fecha2 = self.descuento.valido_hasta.date() 
 
         if (ahora < fecha1 or ahora > fecha2):
+            self.descuento.estado = False
+            self.descuento.save()
             return precio_final
 
         #VALIDACION DE LA CANTIDAD
